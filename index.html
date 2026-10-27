@@ -1,1099 +1,324 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>FlowTrace Operation Manual</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowTrace User Manual</title>
+<meta name="description" content="FlowTrace 1.6.7 user manual: surface well testing data acquisition and monitoring.">
+<link rel="icon" href="images/icon.png">
 <style>
-/* Layout: sticky chapter index on the left, one long manual column on the right; each chapter owns a colour. */
-:root {
-  --paper: #F6F7F9;
-  --sheet: #FFFFFF;
-  --ink: #14233B;
-  --ink-2: #44526A;
-  --ink-3: #6B778C;
-  --rule: #DCE1E8;
-  --navy: #14233B;
-  --navy-fg: #F4F6F9;
-  --flame: #D97706;        /* FlowTrace gauge orange */
-  --c-setup: #1F5FBF;
-  --c-log: #0E8074;
-  --c-measure: #C2650A;
-  --c-alarm: #C0362C;
-  --c-graph: #4338CA;
-  --c-report: #0B7A9E;
-  --c-data: #4D6B2E;
-  --c-draw: #A23B72;
-  --c-calc: #8A5A00;
-  --tint: 6%;
-  --tip-bg: #E8F5EE; --tip-fg: #155B36; --tip-bar: #22985A;
-  --note-bg: #E9F0FB; --note-fg: #1C4380; --note-bar: #2F6FD0;
-  --warn-bg: #FDF1E3; --warn-fg: #7A3E06; --warn-bar: #D97706;
-  --chip-bg: #EEF1F5; --chip-fg: #1E2B40; --chip-bd: #CBD3DE;
-  --shadow: 0 1px 2px rgba(20,35,59,.06), 0 8px 24px rgba(20,35,59,.08);
-  --f-display: 'Barlow Semi Condensed', 'Arial Narrow', Arial, sans-serif;
-  --f-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
-  --f-mono: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --paper: #0F1724; --sheet: #162133; --ink: #E8EDF4; --ink-2: #B9C4D3; --ink-3: #8C99AC; --rule: #2A3850;
-  --navy: #0A111C; --navy-fg: #F4F6F9; --flame: #F59E2E;
-  --c-setup: #6EA4F5; --c-log: #3CC2B1; --c-measure: #F5A04A; --c-alarm: #F2776C; --c-graph: #9C95F7; --c-report: #4FC1E3; --c-data: #9BC46B; --c-draw: #E07BB4; --c-calc: #E0B04A;
-  --tint: 14%;
-  --tip-bg: #12301F; --tip-fg: #B6E8CB; --tip-bar: #3FBF7A;
-  --note-bg: #142844; --note-fg: #BCD3F7; --note-bar: #5D93E8;
-  --warn-bg: #36240D; --warn-fg: #F7D3A6; --warn-bar: #F59E2E;
-  --chip-bg: #22304A; --chip-fg: #E3E9F2; --chip-bd: #3A4B68;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  color-scheme: dark } }
-:root[data-theme="dark"] {
-  --paper: #0F1724; --sheet: #162133; --ink: #E8EDF4; --ink-2: #B9C4D3; --ink-3: #8C99AC; --rule: #2A3850;
-  --navy: #0A111C; --navy-fg: #F4F6F9; --flame: #F59E2E;
-  --c-setup: #6EA4F5; --c-log: #3CC2B1; --c-measure: #F5A04A; --c-alarm: #F2776C; --c-graph: #9C95F7; --c-report: #4FC1E3; --c-data: #9BC46B; --c-draw: #E07BB4; --c-calc: #E0B04A;
-  --tint: 14%;
-  --tip-bg: #12301F; --tip-fg: #B6E8CB; --tip-bar: #3FBF7A;
-  --note-bg: #142844; --note-fg: #BCD3F7; --note-bar: #5D93E8;
-  --warn-bg: #36240D; --warn-fg: #F7D3A6; --warn-bar: #F59E2E;
-  --chip-bg: #22304A; --chip-fg: #E3E9F2; --chip-bd: #3A4B68;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  color-scheme: dark }
-
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16.5px; line-height: 1.6; padding-inline: 16px; padding-block: 0; }
-a { color: var(--c-setup); }
-a:focus-visible, button:focus-visible { outline: 3px solid var(--flame); outline-offset: 2px; border-radius: 4px; }
-h1, h2, h3, h4 { font-family: var(--f-display); line-height: 1.12; text-wrap: balance; margin: 0; color: var(--ink); }
-p { margin: 0; }
-.wrap { width: 90%; max-width: none; margin-inline: auto; padding-block: 24px 64px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 36px; align-items: start; }
-
-/* ---------- cover ---------- */
-.cover { grid-column: 1 / -1; background: var(--navy); color: var(--navy-fg); border-radius: 20px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); box-shadow: var(--shadow); }
-.cover-text { padding: 44px 44px 40px; display: flex; flex-direction: column; gap: 20px; }
-.brand { display: flex; align-items: center; gap: 14px; }
-.brand img { width: 56px; height: 56px; }
-.brand b { font-family: var(--f-display); font-size: 30px; font-weight: 700; letter-spacing: .3px; color: #F4F6F9; }
-.brand b span { color: #F59E2E; }
-.cover h1 { color: #F4F6F9; font-size: clamp(40px, 6vw, 66px); font-weight: 700; letter-spacing: .2px; }
-.cover .lead { color: #C5D0DE; font-size: 18px; max-width: 34em; }
-.cover-meta { display: flex; flex-wrap: wrap; gap: 10px; }
-.cover-meta span { font-family: var(--f-mono); font-size: 13px; color: #E7ECF3; border: 1px solid #34486A; border-radius: 999px; padding: 4px 12px; }
-.stripe { display: flex; height: 8px; border-radius: 4px; overflow: hidden; max-width: 360px; }
-.stripe i { flex: 1; }
-.cover-shot { background: #0B1422; padding: 28px; display: flex; align-items: center; justify-content: center; }
-.cover-shot img { width: 100%; height: auto; border-radius: 10px; display: block; border: 1px solid #2E4566; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
-
-/* ---------- index ---------- */
-.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; padding: 18px 14px; max-height: calc(100vh - 32px); overflow-y: auto; }
-.toc h2 { font-size: 13px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink-3); padding: 0 8px 10px; font-family: var(--f-body); font-weight: 600; }
-.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.toc a { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; color: var(--ink-2); text-decoration: none; font-size: 14.5px; line-height: 1.3; }
-.toc a:hover { background: var(--chip-bg); color: var(--ink); }
-.toc a b { font-family: var(--f-display); font-size: 15px; color: #fff; background: var(--c); border-radius: 6px; text-align: center; padding: 2px 0; }
-
-/* ---------- chapters ---------- */
-main { min-width: 0; display: flex; flex-direction: column; gap: 32px; }
-.chapter { background: var(--sheet); border: 1px solid var(--rule); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); scroll-margin-top: 16px; }
-.ch-head { background: color-mix(in srgb, var(--c) var(--tint), var(--sheet)); border-bottom: 3px solid var(--c); padding: 26px 32px 22px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 20px; align-items: center; }
-.ch-num { grid-row: span 2; font-family: var(--f-display); font-weight: 700; font-size: 56px; line-height: 1; color: var(--c); min-width: 64px; }
-.ch-kicker { font-size: 12.5px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--c); }
-.ch-head h2 { font-size: clamp(28px, 3.6vw, 38px); font-weight: 700; }
-.ch-body { padding: 26px 32px 32px; display: flex; flex-direction: column; gap: 22px; }
-.ch-body > p, .ch-body li, .ch-body td { max-width: 72ch; }
-.sec { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
-.sec + .sec { border-top: 1px solid var(--rule); padding-top: 22px; }
-.sec h3 { font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-.sec h3::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--c); flex: none; }
-.sec h4 { font-size: 18px; font-weight: 600; color: var(--ink-2); }
-.ch-body p { color: var(--ink-2); }
-.ch-body strong { color: var(--ink); }
-
-.ui { font-family: var(--f-mono); font-size: .86em; font-weight: 500; background: var(--chip-bg); color: var(--chip-fg); border: 1px solid var(--chip-bd); border-bottom-width: 2px; border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
-
-ol.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 14px; align-items: start; color: var(--ink-2); }
-ol.steps > li::before { content: counter(s); font-family: var(--f-display); font-weight: 700; font-size: 17px; color: #fff; background: var(--c); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; }
-ol.steps > li > div { padding-top: 4px; min-width: 0; }
-ul.dots { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; color: var(--ink-2); }
-ul.dots li::marker { color: var(--c); }
-
-.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; }
-table { border-collapse: collapse; width: 100%; font-size: 15px; }
-th { text-align: left; font-family: var(--f-body); font-weight: 600; font-size: 13px; letter-spacing: .6px; text-transform: uppercase; color: var(--ink); background: color-mix(in srgb, var(--c) var(--tint), var(--sheet)); padding: 10px 14px; border-bottom: 2px solid var(--c); }
-td { padding: 10px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
-tr:last-child td { border-bottom: none; }
-td:first-child { color: var(--ink); font-weight: 500; }
-.num { font-variant-numeric: tabular-nums; }
-
-.call { border-radius: 12px; padding: 14px 18px 14px 16px; border-left: 5px solid; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; }
-.call b.k { font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; padding-top: 3px; }
-.call p { color: inherit !important; }
-.call.tip { background: var(--tip-bg); color: var(--tip-fg); border-color: var(--tip-bar); }
-.call.note { background: var(--note-bg); color: var(--note-fg); border-color: var(--note-bar); }
-.call.warn { background: var(--warn-bg); color: var(--warn-fg); border-color: var(--warn-bar); }
-
-figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
-figure img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--rule); background: #F4F6F9; }
-figure.narrow img { max-width: 620px; }
-figure.small img { max-width: 440px; }
-figcaption { font-size: 13.5px; color: var(--ink-3); }
-figcaption b { color: var(--c); font-weight: 600; margin-right: 6px; }
-.calc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 22px; }
-.calc { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.calc p { font-size: 15px; }
-.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
-.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
-
-.formula { background: var(--navy); color: #F4F6F9; border-radius: 12px; padding: 16px 20px; font-family: var(--f-mono); font-size: 15px; line-height: 1.9; overflow-x: auto; white-space: pre; }
-.formula em { color: #F7B65C; font-style: normal; }
-
-.legend { display: flex; flex-wrap: wrap; gap: 10px; }
-.legend span { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px 4px 6px; }
-.legend i { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(0,0,0,.12); }
-
-.foot { grid-column: 1 / -1; text-align: center; color: var(--ink-3); font-size: 14px; padding-top: 8px; }
-
-@media (max-width: 1060px) {
-  .wrap { grid-template-columns: minmax(0, 1fr); }
-  .toc { position: static; max-height: none; }
-  .toc ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
-}
-@media (max-width: 760px) {
-  .cover { grid-template-columns: minmax(0, 1fr); }
-  .cover-text { padding: 28px 22px; }
-  .cover-shot { padding: 16px; }
-  .ch-head { padding: 20px 18px; }
-  .ch-num { font-size: 42px; min-width: 46px; }
-  .ch-body { padding: 20px 18px 24px; }
-  .duo, .split { grid-template-columns: minmax(0, 1fr); }
+:root { --blue:#1f4e79; --accent:#2e74b5; --text:#1f2937; --muted:#5b6472; --line:#d9e1ea;
+        --bg:#ffffff; --side:#f4f7fb; --tip:#e8f1fb; --note:#fff4e0; --stripe:#eef3f8; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:16px; }
+body { margin:0; font:16px/1.6 "Segoe UI", Calibri, Arial, sans-serif; color:var(--text); background:var(--bg); }
+aside { position:fixed; top:0; left:0; bottom:0; width:290px; overflow-y:auto; background:var(--side);
+        border-right:1px solid var(--line); padding:20px 14px 40px; }
+.brand { display:flex; align-items:center; gap:10px; margin:0 6px 6px; color:var(--blue); font-weight:700; font-size:20px; text-decoration:none; }
+.brand img { width:34px; height:34px; }
+.ver { margin:0 6px 14px; color:var(--muted); font-size:13px; }
+.dl { display:block; margin:0 6px 16px; padding:8px 12px; background:var(--accent); color:#fff; border-radius:6px;
+      text-align:center; text-decoration:none; font-weight:600; font-size:14px; }
+.dl:hover { background:var(--blue); }
+nav a { display:block; text-decoration:none; color:var(--text); border-radius:5px; }
+nav a.l1 { font-weight:600; color:var(--blue); padding:7px 8px 3px; margin-top:6px; font-size:14.5px; }
+nav a.l2 { padding:3px 8px 3px 22px; font-size:13.5px; color:var(--muted); }
+nav a:hover, nav a.on { background:#e1eaf5; color:var(--blue); }
+main { margin-left:290px; padding:0 48px 80px; max-width:1180px; }
+header.hero { padding:56px 0 36px; border-bottom:1px solid var(--line); margin-bottom:8px; display:flex; gap:24px; align-items:center; }
+header.hero img { width:84px; height:84px; }
+header.hero h1 { margin:0; font:700 40px/1.1 Cambria, Georgia, serif; color:var(--blue); }
+header.hero p { margin:6px 0 0; color:var(--muted); font-size:17px; }
+section { padding-top:12px; }
+h1, h2, h3 { font-family:Cambria, Georgia, serif; color:var(--blue); line-height:1.25; }
+h1 { font-size:30px; margin:40px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); }
+h2 { font-size:22px; color:var(--accent); margin:30px 0 8px; }
+h3 { font-size:18px; color:var(--accent); margin:22px 0 6px; }
+p, li { max-width:860px; }
+ol, ul { padding-left:26px; } li { margin:3px 0; }
+figure { margin:22px 0 26px; text-align:center; }
+figure img { max-width:100%; height:auto; border:1px solid var(--line); border-radius:6px;
+             box-shadow:0 4px 18px rgba(31,78,121,.12); }
+figcaption { margin-top:8px; font-size:13.5px; font-style:italic; color:var(--muted); }
+.tbl { overflow-x:auto; margin:14px 0 18px; }
+table { border-collapse:collapse; width:100%; max-width:900px; font-size:14.5px; }
+th { background:var(--blue); color:#fff; text-align:left; padding:8px 10px; }
+td { border:1px solid var(--line); padding:7px 10px; vertical-align:top; }
+tbody tr:nth-child(even) td { background:var(--stripe); }
+.callout { max-width:900px; margin:14px 0 18px; padding:12px 16px; border-radius:6px; border-left:4px solid var(--accent); background:var(--tip); }
+.callout.note { border-left-color:#d97706; background:var(--note); }
+.callout strong:first-child { color:var(--blue); margin-right:6px; }
+footer { margin-top:60px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px; }
+#menu { display:none; }
+@media (max-width: 900px) {
+  aside { position:static; width:auto; border-right:0; border-bottom:1px solid var(--line); padding:12px 16px; }
+  aside nav { display:none; } aside.open nav { display:block; }
+  #menu { display:block; width:100%; margin:4px 0 10px; padding:8px; border:1px solid var(--line); border-radius:6px;
+          background:#fff; font:600 14px inherit; color:var(--blue); }
+  main { margin-left:0; padding:0 16px 60px; }
+  header.hero { padding:28px 0 20px; } header.hero h1 { font-size:30px; } header.hero img { width:56px; height:56px; }
+  figure img { width:100% !important; }
 }
 </style>
-
-<div class="wrap">
-
-<header class="cover">
-  <div class="cover-text">
-    <div class="brand"><img src="img/logo_icon_square.png" alt="FlowTrace gauge logo"><b>Flow<span>Trace</span></b></div>
-    <h1>Operation Manual</h1>
-    <p class="lead">Step-by-step instructions for running a surface well test with FlowTrace: connecting the Modbus device, logging readings, measuring liquid and gas, alarms, graphs and reports.</p>
-    <div class="cover-meta"><span>October 2026</span><span>Windows desktop</span></div>
-    <div class="stripe" aria-hidden="true"><i style="background:#1F5FBF"></i><i style="background:#0E8074"></i><i style="background:#C2650A"></i><i style="background:#C0362C"></i><i style="background:#4338CA"></i><i style="background:#0B7A9E"></i><i style="background:#A23B72"></i><i style="background:#8A5A00"></i><i style="background:#4D6B2E"></i></div>
-  </div>
-  <div class="cover-shot"><img src="img/studio.png" alt="FlowTrace Graph Studio with a Well-1 report heading and a week of pressure and temperature trends"></div>
+</head>
+<body>
+<aside id="side">
+  <a class="brand" href="#top"><img src="images/icon.png" alt="">FlowTrace</a>
+  <div class="ver">User Manual · Version 1.6.7</div>
+  <a class="dl" href="FlowTrace_User_Manual.pdf" download>Download PDF</a>
+  <button id="menu" type="button" aria-expanded="false">Contents</button>
+  <nav><a class="l1" href="#1-introduction">1  Introduction</a><a class="l2" href="#what-you-can-do">What you can do</a><a class="l2" href="#concepts">Concepts</a><a class="l2" href="#about-this-manual">About this manual</a><a class="l1" href="#2-installation-and-activation">2  Installation and Activation</a><a class="l2" href="#installing-flowtrace">Installing FlowTrace</a><a class="l2" href="#activation">Activation</a><a class="l2" href="#license-status">License status</a><a class="l1" href="#3-screen-layout">3  Screen Layout</a><a class="l2" href="#menu-bar">Menu Bar</a><a class="l2" href="#toolbar">Toolbar</a><a class="l2" href="#table-configuration-sidebar">Table Configuration Sidebar</a><a class="l1" href="#4-projects">4  Projects</a><a class="l2" href="#quick-start-your-first-live-reading">Quick Start: your first live reading</a><a class="l1" href="#5-device-connection-and-channels">5  Device Connection and Channels</a><a class="l2" href="#system-configuration">System Configuration</a><a class="l2" href="#channel-configuration">Channel Configuration</a><a class="l2" href="#start-and-stop-monitoring">Start and Stop Monitoring</a><a class="l1" href="#6-viewing-data">6  Viewing Data</a><a class="l2" href="#live-stream">Live Stream</a><a class="l2" href="#data-table">Data Table</a><a class="l2" href="#monitoring-view">Monitoring View</a><a class="l2" href="#key-parameters">Key Parameters</a><a class="l1" href="#7-measurement-tools">7  Measurement Tools</a><a class="l2" href="#orifice-gas-flow-aga-3">Orifice Gas Flow (AGA-3)</a><a class="l2" href="#liquid-oil-and-water-measurement">Liquid, Oil and Water Measurement</a><a class="l2" href="#sf-dp-measurement">SF-DP Measurement</a><a class="l2" href="#choke-manager">Choke Manager</a><a class="l2" href="#virtual-columns">Virtual Columns</a><a class="l1" href="#8-graphs">8  Graphs</a><a class="l2" href="#graphs-tab">Graphs Tab</a><a class="l2" href="#graph-only-and-full-screen">Graph Only and Full Screen</a><a class="l2" href="#graph-studio-pdf-reports">Graph Studio (PDF Reports)</a><a class="l1" href="#9-alarms">9  Alarms</a><a class="l1" href="#10-reports-and-export">10  Reports and Export</a><a class="l2" href="#export-data-to-excel">Export Data to Excel</a><a class="l2" href="#eowr-report-end-of-well-report">EOWR Report (End of Well Report)</a><a class="l2" href="#mmt-delivery-note-and-mmr">MMT: Delivery Note and MMR</a><a class="l2" href="#calibration-reports">Calibration Reports</a><a class="l2" href="#p-id">P&amp;ID</a><a class="l1" href="#11-calculators">11  Calculators</a><a class="l2" href="#average">Average</a><a class="l2" href="#calculator">Calculator</a><a class="l2" href="#flow-calculator">Flow Calculator</a><a class="l2" href="#api-gravity">API Gravity</a><a class="l1" href="#12-data-management">12  Data Management</a><a class="l2" href="#database-tab">Database Tab</a><a class="l2" href="#where-your-data-is-stored">Where your data is stored</a><a class="l2" href="#theme-and-display">Theme and Display</a><a class="l1" href="#13-help-and-troubleshooting">13  Help and Troubleshooting</a><a class="l2" href="#built-in-help">Built-in Help</a><a class="l2" href="#cannot-connect-to-the-device">Cannot connect to the device</a><a class="l2" href="#values-look-wrong-or-are-missing">Values look wrong or are missing</a><a class="l2" href="#graphs-and-exports">Graphs and exports</a><a class="l2" href="#activation-messages">Activation messages</a><a class="l2" href="#support">Support</a></nav>
+</aside>
+<main id="top">
+<header class="hero"><img src="images/icon.png" alt="FlowTrace logo">
+  <div><h1>FlowTrace User Manual</h1><p>Surface well testing data acquisition and monitoring · Version 1.6.7</p></div>
 </header>
-
-<nav class="toc" aria-label="Chapters">
-  <h2>Contents</h2>
-  <ol>
-    <li><a href="#intro" style="--c:var(--c-setup)"><b>1</b>Getting to know FlowTrace</a></li>
-    <li><a href="#setup" style="--c:var(--c-setup)"><b>2</b>Activation and Projects</a></li>
-    <li><a href="#device" style="--c:var(--c-log)"><b>3</b>Device and channels</a></li>
-    <li><a href="#logging" style="--c:var(--c-log)"><b>4</b>Logging readings</a></li>
-    <li><a href="#viewing" style="--c:var(--c-log)"><b>5</b>Viewing and editing data</a></li>
-    <li><a href="#measure" style="--c:var(--c-measure)"><b>6</b>Measurement columns</a></li>
-    <li><a href="#alarms" style="--c:var(--c-alarm)"><b>7</b>Alarms</a></li>
-    <li><a href="#graphs" style="--c:var(--c-graph)"><b>8</b>Graphs and Graph Studio</a></li>
-    <li><a href="#reports" style="--c:var(--c-report)"><b>9</b>EOWR and Excel exports</a></li>
-    <li><a href="#calib" style="--c:var(--c-report)"><b>10</b>Calibration Reports and MMT</a></li>
-    <li><a href="#pid" style="--c:var(--c-draw)"><b>11</b>P&amp;ID and the Layout Editor</a></li>
-    <li><a href="#tools" style="--c:var(--c-calc)"><b>12</b>Calculators</a></li>
-    <li><a href="#data" style="--c:var(--c-data)"><b>13</b>Data, backups and settings</a></li>
-    <li><a href="#trouble" style="--c:var(--c-data)"><b>14</b>Troubleshooting and support</a></li>
-  </ol>
-</nav>
-
-<main>
-
-<!-- 1 ============================================================ -->
-<section class="chapter" id="intro" style="--c:var(--c-setup)">
-  <div class="ch-head"><div class="ch-num">1</div><p class="ch-kicker">Introduction</p><h2>Getting to know FlowTrace</h2></div>
-  <div class="ch-body">
-    <p>FlowTrace is a data acquisition and monitoring application for surface well testing. It reads the field sensors through a Modbus RTU device, shows the values live, saves every reading, calculates liquid and gas rates, raises alarms, and turns the data into graphs, tables and reports.</p>
-    <div class="tbl"><table>
-      <tr><th style="width:30%">You can</th><th>Details</th></tr>
-      <tr><td>Read sensors</td><td>Up to <span class="num">125</span> channels from one Modbus RTU device over COM / RS-485.</td></tr>
-      <tr><td>Log automatically</td><td>Every reading is saved to the Project database and a daily CSV file.</td></tr>
-      <tr><td>Measure</td><td>Liquid, oil and water rates and cumulatives, orifice gas rate (AGA-3), SF-DP, choke records.</td></tr>
-      <tr><td>Watch</td><td>Live Stream, Monitoring View, trend graphs and High / Low alarms.</td></tr>
-      <tr><td>Report</td><td>Graph Studio PDFs, End-of-Well Report, calibration reports, P&amp;ID sheets, challans, Excel exports.</td></tr>
-    </table></div>
-
-    <div class="sec">
-      <h3>The main window</h3>
-      <figure><img src="img/live.png" alt="FlowTrace main window showing the menu bar, toolbar, tabs, Table Configuration sidebar and the Live Stream table"><figcaption><b>Fig 1.1</b>The main window with the Live Stream tab open.</figcaption></figure>
-      <div class="tbl"><table>
-        <tr><th style="width:24%">Area</th><th>What it is for</th></tr>
-        <tr><td>Menu bar</td><td>File, Project, View, Measurement, Plot, Grid, Report, RealTime, Alarms, Activation, System Config and Help.</td></tr>
-        <tr><td>Toolbar</td><td>Active Project, Start / Stop Monitoring, Channels, Export Data, Log interval, Average gaps and the monitoring status.</td></tr>
-        <tr><td>Sidebar (left)</td><td><b>Table Configuration</b>: choose which columns are shown. Collapse or expand it with the arrow.</td></tr>
-        <tr><td>Tabs</td><td>Live Stream, Data Table, Graphs, Graph Only, Graph Studio, EOWR Report, Database, Monitoring View, Calculator, Flow Calculator, API Gravity, Average, Calibration Reports, MMT and P&amp;ID.</td></tr>
-        <tr><td>Status bar (bottom)</td><td>Licence status, messages, the alarm chip, Project, Log interval, version and clock.</td></tr>
-      </table></div>
-    </div>
-
-    <div class="sec">
-      <h3>The toolbar</h3>
-      <figure><img src="img/toolbar.png" alt="Toolbar: Project button, green Start, Stop, Channels, Export Data, Log interval box, Average gaps checkbox and Status"><figcaption><b>Fig 1.2</b>From left: Project, Start Monitoring (green), Stop Monitoring, Channels, Export Data, Log interval, Average gaps, Status.</figcaption></figure>
-      <div class="call tip"><b class="k">Tip</b><p>On smaller screens some toolbar buttons show only their icon. Hover over an icon to see its name. Press <span class="ui">F1</span> anywhere to open the built-in Help.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="1-introduction">1  Introduction</h1>
+<p>FlowTrace is a data acquisition and monitoring application for surface well testing. It reads field sensors through a Modbus device, shows the values live, logs every reading to a database and turns the data into tables, graphs and professional reports.</p>
+<p>FlowTrace gives the well test crew one place to gather electronic readings, add measurement calculations (gas, liquid, oil and water rates, SF-DP, choke records), watch the well respond as parameters change and produce the reports the client needs at the end of the job.</p>
+<h2 id="what-you-can-do">What you can do</h2>
+<ul><li>Read up to 125 sensor channels from a Modbus device over a serial (COM / RS-485) connection.</li><li>Watch live values in the Live Stream, Monitoring View, Key Parameters and Graphs.</li><li>Log every reading automatically to the Project database and a CSV file.</li><li>Add orifice gas, liquid, oil and water measurement columns, SF-DP and choke records.</li><li>Set alarms on any column, with popup, sound and an Alarm Log.</li><li>Filter, edit and export your data to Excel.</li><li>Build PDF reports in Graph Studio, End of Well Reports (EOWR), calibration reports, delivery notes and P&amp;ID packages.</li><li>Keep each well or job in its own Project.</li></ul>
+<h2 id="concepts">Concepts</h2>
+<div class="tbl"><table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>Project</strong></td><td>One well or job. A Project holds its own settings, channels, measurement columns, database, CSV logs and exports.</td></tr><tr><td><strong>Channel</strong></td><td>One sensor value read from the Modbus device (for example THP or Separator Temp).</td></tr><tr><td><strong>Reading</strong></td><td>One row of data: all channel values at one date and time, saved once per Log interval.</td></tr><tr><td><strong>Session</strong></td><td>One run from Start Monitoring to Stop Monitoring. Every Start creates a new session.</td></tr><tr><td><strong>Measurement column</strong></td><td>A calculated column added from the Measurement menu (gas rate, liquid rate, SF-DP ...).</td></tr><tr><td><strong>Virtual column</strong></td><td>Your own calculated column, built from channels with the Formula Builder.</td></tr></tbody></table></div>
+<h2 id="about-this-manual">About this manual</h2>
+<p>Every screen in this manual is a real screenshot of FlowTrace. The sample Project shown is <em>Demo Well</em>, a six-hour flowback test with three choke changes. Your screens show your own Project, channels and data.</p>
+<div class="callout tip"><strong>Tip</strong> Press <strong>F1</strong> anywhere in FlowTrace to open the built-in Help, which follows the same topics as this manual.</div>
 </section>
-
-<!-- 2 ============================================================ -->
-<section class="chapter" id="setup" style="--c:var(--c-setup)">
-  <div class="ch-head"><div class="ch-num">2</div><p class="ch-kicker">Before the job</p><h2>Activation and Projects</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Activate FlowTrace on this computer</h3>
-      <p>FlowTrace needs an activation key made for <strong>this computer</strong>. A key works only on the computer it was made for. No internet connection is needed.</p>
-      <ol class="steps">
-        <li><div>Start FlowTrace and name your first Project. The activation window opens and shows this computer's <strong>Machine Code</strong> (for example <span class="ui">TNR5-P8J7-8PCN</span>).</div></li>
-        <li><div>Click <span class="ui">Copy</span> and send the Machine Code to the administrator by phone, WhatsApp or email.</div></li>
-        <li><div>You receive a licence file (<span class="ui">.lic</span>) or a key. Copy the file to this computer and click <span class="ui">Load License File...</span>, or paste the key and click <span class="ui">Activate</span>.</div></li>
-      </ol>
-      <div class="tbl"><table>
-        <tr><th style="width:38%">Shown at the bottom left</th><th>Meaning</th></tr>
-        <tr><td>Licensed · N days left</td><td>Full licence, active.</td></tr>
-        <tr><td>Trial · N days left</td><td>Time-limited trial licence.</td></tr>
-        <tr><td>License expires in N days</td><td>Fewer than 15 days left. Ask for a renewal key.</td></tr>
-        <tr><td>License expired</td><td>Enter a new key in <span class="ui">Activation › Activate / Renew...</span></td></tr>
-        <tr><td>License cancelled</td><td>The administrator cancelled this computer's licence.</td></tr>
-      </table></div>
-      <div class="call note"><b class="k">Note</b><p>When a licence ends, monitoring stops and all data logged so far stays saved. A new computer, a Windows reinstall or a new motherboard gives a new Machine Code and needs a new key.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>One Project per well or job</h3>
-      <p>A Project keeps everything for one job together: connection settings, channels, measurement columns, alarms, the database, CSV logs, reports and exports. Switching Project switches all of it.</p>
-      <div class="tbl"><table>
-        <tr><th style="width:50%">To do this</th><th>Use</th></tr>
-        <tr><td>Start a new job with empty data</td><td><span class="ui">Project › New Project...</span></td></tr>
-        <tr><td>Go back to an earlier job</td><td><span class="ui">Project › Open Project...</span></td></tr>
-        <tr><td>Bring in a Project from another PC or a backup</td><td><span class="ui">Project › Import Project...</span></td></tr>
-        <tr><td>Make a full copy of the current Project</td><td><span class="ui">File › Save Project As...</span></td></tr>
-      </table></div>
-      <div class="call tip"><b class="k">Tip</b><p>Name the Project after the well (for example <em>Well-1</em>). The name is shown on the toolbar and in the status bar, so everyone can see which job is being logged.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="2-installation-and-activation">2  Installation and Activation</h1>
+<h2 id="installing-flowtrace">Installing FlowTrace</h2>
+<ol><li>Run <strong>FlowTrace_Setup.exe</strong> and follow the installer.</li><li>Start FlowTrace from the desktop or Start menu shortcut.</li><li>The first time FlowTrace starts, type a name for your first Project (for example the well name).</li></ol>
+<p>To update, run the new installer. It upgrades the existing installation in place and keeps all your Projects and settings. Close FlowTrace before installing, or let the installer close it for you.</p>
+<h2 id="activation">Activation</h2>
+<p>FlowTrace needs an activation key made for this computer. A key works only on the computer it was made for.</p>
+<figure><a href="images/38_activation.png" target="_blank" rel="noopener"><img src="images/38_activation.png" alt="FlowTrace Activation window (Activation &gt; Activate / Renew...)" loading="lazy" style="width:65%"></a><figcaption>Figure 1: FlowTrace Activation window (Activation &gt; Activate / Renew...)</figcaption></figure>
+<ol><li>Open <strong>Activation &gt; Activate / Renew...</strong>. The window shows this computer's <strong>Machine Code</strong>.</li><li>Send the Machine Code to the administrator (phone, WhatsApp or email). <strong>Copy</strong> copies it. No internet is needed on this computer.</li><li>You receive a license file (.lic) or a key. Click <strong>Load License File...</strong>, or paste the key and click <strong>Activate</strong>.</li></ol>
+<h2 id="license-status">License status</h2>
+<p>The license status is always shown at the bottom left of the main window. Click it to open the Activation window.</p>
+<div class="tbl"><table><thead><tr><th>Status shown</th><th>Meaning</th></tr></thead><tbody><tr><td>Licensed · N days left</td><td>Full license, active.</td></tr><tr><td>Trial · N days left</td><td>Time-limited trial license.</td></tr><tr><td>License expires in N days</td><td>Fewer than 15 days left. Ask for a renewal key.</td></tr><tr><td>License expired</td><td>Enter a new key to continue.</td></tr><tr><td>License cancelled</td><td>The administrator cancelled this computer's license.</td></tr></tbody></table></div>
+<ul><li>In the last 15 days a reminder appears every time FlowTrace is opened, and while it stays open (once a day, twice a day in the last 7 days).</li><li>When the license ends, monitoring stops. All data logged so far is kept.</li><li>A new computer, a Windows reinstall or a motherboard change gives a new Machine Code and needs a new key.</li></ul>
+<div class="callout note"><strong>Important</strong> Your data is never deleted when a license expires or is cancelled. For a new key contact info@energyforge.in.</div>
 </section>
-
-<!-- 3 ============================================================ -->
-<section class="chapter" id="device" style="--c:var(--c-log)">
-  <div class="ch-head"><div class="ch-num">3</div><p class="ch-kicker">Hardware set-up</p><h2>Device and channels</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Connect to the Modbus device</h3>
-      <div class="split">
-        <ol class="steps">
-          <li><div>Plug the Modbus device (or USB-to-RS485 converter) into the computer and power it on.</div></li>
-          <li><div>Click <span class="ui">System Config</span> in the menu bar, next to Help.</div></li>
-          <li><div>On the <span class="ui">Connection</span> tab click <span class="ui">Auto Detect</span>, or pick the COM port yourself.</div></li>
-          <li><div>Set Baudrate, Parity, Stop Bits, Byte Size, Timeout and Slave ID to exactly what the device uses.</div></li>
-          <li><div>Optional: on the <span class="ui">Storage</span> tab change the Export Path and Database Path with <span class="ui">Browse...</span></div></li>
-          <li><div>Click <span class="ui">OK</span>.</div></li>
-        </ol>
-        <figure><img src="img/d_sysconfig.png" alt="System Config dialog, Connection tab: Port COM4, Baudrate 9600, Parity O, Stop Bits 1, Byte Size 8, Timeout 2.00 s, Slave ID 1"><figcaption><b>Fig 3.1</b>System Config › Connection.</figcaption></figure>
-      </div>
-      <div class="tbl"><table>
-        <tr><th style="width:28%">Setting</th><th>What to enter</th></tr>
-        <tr><td>Port</td><td>The COM port of the device or converter (see Windows Device Manager).</td></tr>
-        <tr><td>Baudrate</td><td>Communication speed, for example <span class="num">9600</span>.</td></tr>
-        <tr><td>Parity</td><td>None, Even or Odd. Must match the device.</td></tr>
-        <tr><td>Stop Bits / Byte Size</td><td>Usually 1 and 8.</td></tr>
-        <tr><td>Timeout (s)</td><td>How long to wait for an answer before retrying.</td></tr>
-        <tr><td>Slave ID</td><td>The Modbus address of the device.</td></tr>
-      </table></div>
-      <div class="call warn"><b class="k">Check</b><p>A mismatch in Baudrate or Parity is the most common reason for no data. Read the settings from the device's label or manual.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>Set up channels</h3>
-      <p>Channels are the sensor values FlowTrace reads from the device. Open them with <span class="ui">Channels</span> on the toolbar or <span class="ui">Measurement › Channels...</span></p>
-      <figure><img src="img/d_channels.png" alt="Channel Configuration dialog with Start Register, Channel Count and a row per channel: sensor name, unit, formula, multiplier, offset, visible and alarm"><figcaption><b>Fig 3.2</b>Channel Configuration. Each row shows its channel and register (CH 2 · Reg 1).</figcaption></figure>
-      <ol class="steps">
-        <li><div>Set <span class="ui">Start Register</span> (the first register to read) and <span class="ui">Channel Count</span> (1 to 125).</div></li>
-        <li><div>Fill in each row as described in the table below.</div></li>
-        <li><div>Use the ▲ / ▼ buttons on the right to change the channel order.</div></li>
-        <li><div>Click <span class="ui">OK</span>. The names and units appear in every tab.</div></li>
-      </ol>
-      <div class="tbl"><table>
-        <tr><th style="width:26%">Column</th><th>Use</th></tr>
-        <tr><td>Sensor Name</td><td>A clear name, for example <em>THP V5</em> or <em>Sep temp</em>.</td></tr>
-        <tr><td>Unit</td><td>The unit the value is shown in.</td></tr>
-        <tr><td>Formula</td><td>Double-click (or click <span class="ui">ƒx</span>) to open the Formula Builder if the raw value needs converting. Leave <em>Linear</em> for a direct reading.</td></tr>
-        <tr><td>Multiplier (x) / Offset (+)</td><td>Scale and shift the value for calibration. Example: a temperature sent in tenths uses multiplier <span class="num">0.1</span>.</td></tr>
-        <tr><td>Visible</td><td>Untick to hide a channel you don't need.</td></tr>
-        <tr><td>Alarm</td><td>Opens the warning and alarm levels for that channel. See chapter 7.</td></tr>
-      </table></div>
-      <div class="call tip"><b class="k">Tip</b><p>Sensor re-wired to another channel during the job? Right-click that channel's heading in the Data Table and choose <span class="ui">Sensor moved to another channel...</span> Earlier readings stay on the old channel, new readings go to the new one.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="3-screen-layout">3  Screen Layout</h1>
+<figure><a href="images/01_main_window.png" target="_blank" rel="noopener"><img src="images/01_main_window.png" alt="The FlowTrace main window" loading="lazy" style="width:100%"></a><figcaption>Figure 2: The FlowTrace main window</figcaption></figure>
+<p>The FlowTrace window has five main areas:</p>
+<div class="tbl"><table><thead><tr><th>Area</th><th>What it is for</th></tr></thead><tbody><tr><td><strong>Menu bar</strong></td><td>File, Project, View, Measurement, Plot, Grid, Report, RealTime, Alarms, Activation, System Config and Help.</td></tr><tr><td><strong>Toolbar</strong></td><td>Active Project name, Start / Stop Monitoring, Channels, Export Data, Log interval, Average gaps and the monitoring status.</td></tr><tr><td><strong>Sidebar (left)</strong></td><td>Table Configuration: choose which columns are shown. Open or close it with the arrow button.</td></tr><tr><td><strong>Tabs</strong></td><td>Live Stream, Data Table, Graphs, Graph Only, Graph Studio, Average, Key Parameters, Monitoring View, API Gravity, MMT, Calibration Reports, EOWR Report, Database, Calculator, Flow Calculator and P&amp;ID.</td></tr><tr><td><strong>Status bar (bottom)</strong></td><td>License status, messages, active alarms, Project, log interval, version and clock.</td></tr></tbody></table></div>
+<div class="callout tip"><strong>Tip</strong> Every tab can also be opened from the <strong>View</strong> menu. On smaller screens some toolbar buttons show only their icon; hover over an icon to see its name.</div>
+<h2 id="menu-bar">Menu Bar</h2>
+<p>The menus give access to every function of FlowTrace.</p>
+<p><strong>File</strong>: export data, column order and visibility, Save Project As, Exit.</p>
+<figure><a href="images/20_menu_file.png" target="_blank" rel="noopener"><img src="images/20_menu_file.png" alt="File menu" loading="lazy" style="width:26%"></a><figcaption>Figure 3: File menu</figcaption></figure>
+<p><strong>Project</strong>: shows the current Project; New, Open and Import Project.</p>
+<figure><a href="images/20_menu_project.png" target="_blank" rel="noopener"><img src="images/20_menu_project.png" alt="Project menu" loading="lazy" style="width:22%"></a><figcaption>Figure 4: Project menu</figcaption></figure>
+<p><strong>View</strong>: jump to any tab, show hidden tabs, and choose the Light or Dark theme.</p>
+<figure><a href="images/20_menu_view.png" target="_blank" rel="noopener"><img src="images/20_menu_view.png" alt="View menu" loading="lazy" style="width:20%"></a><figcaption>Figure 5: View menu</figcaption></figure>
+<p><strong>Measurement</strong>: channels and all measurement tools (liquid, orifice gas, oil, water, SF-DP, choke).</p>
+<figure><a href="images/20_menu_measurement.png" target="_blank" rel="noopener"><img src="images/20_menu_measurement.png" alt="Measurement menu" loading="lazy" style="width:27%"></a><figcaption>Figure 6: Measurement menu</figcaption></figure>
+<p><strong>Alarms</strong>: active alarms and Alarm Log, Acknowledge All (Ctrl+Shift+A), fire extinguisher expiry check.</p>
+<figure><a href="images/20_menu_alarms.png" target="_blank" rel="noopener"><img src="images/20_menu_alarms.png" alt="Alarms menu" loading="lazy" style="width:42%"></a><figcaption>Figure 7: Alarms menu</figcaption></figure>
+<p><strong>Help</strong>: FlowTrace Help (F1), What's New, Quick Start Guide, Troubleshooting and About.</p>
+<figure><a href="images/20_menu_help.png" target="_blank" rel="noopener"><img src="images/20_menu_help.png" alt="Help menu" loading="lazy" style="width:21%"></a><figcaption>Figure 8: Help menu</figcaption></figure>
+<div class="tbl"><table><thead><tr><th>Menu</th><th>Items</th></tr></thead><tbody><tr><td>Plot</td><td>Open Graphs, Graph Only, Full Screen Graph.</td></tr><tr><td>Grid</td><td>Data Table, Resize Columns to Fit.</td></tr><tr><td>Report</td><td>Export Data.</td></tr><tr><td>RealTime</td><td>Start Monitoring, Stop Monitoring.</td></tr><tr><td>Activation</td><td>License status, Activate / Renew...</td></tr><tr><td>System Config</td><td>Opens the System Configuration window directly (connection and storage).</td></tr></tbody></table></div>
+<h2 id="toolbar">Toolbar</h2>
+<div class="tbl"><table><thead><tr><th>Control</th><th>Use</th></tr></thead><tbody><tr><td>Project name</td><td>The active Project.</td></tr><tr><td><strong>Start Monitoring</strong></td><td>Connects to the device and starts logging readings.</td></tr><tr><td><strong>Stop Monitoring</strong></td><td>Stops logging. All logged data stays saved.</td></tr><tr><td><strong>Channels</strong></td><td>Opens Channel Configuration.</td></tr><tr><td><strong>Export Data</strong></td><td>Exports the Data Table to Excel.</td></tr><tr><td><strong>Log interval</strong></td><td>How often a reading is saved (1 to 300 seconds).</td></tr><tr><td><strong>Average gaps</strong></td><td>Saves the average of the readings taken during each interval instead of a single reading.</td></tr><tr><td><strong>Status</strong></td><td>Monitoring status: Connecting, Live, No data or Stopped.</td></tr></tbody></table></div>
+<h2 id="table-configuration-sidebar">Table Configuration Sidebar</h2>
+<figure><a href="images/17_sidebar.png" target="_blank" rel="noopener"><img src="images/17_sidebar.png" alt="Table Configuration sidebar open beside the Data Table" loading="lazy" style="width:100%"></a><figcaption>Figure 9: Table Configuration sidebar open beside the Data Table</figcaption></figure>
+<p>The sidebar controls which columns are shown in the Data Table, the Database tab and Excel exports.</p>
+<ul><li>Type in the search box to find a column.</li><li>Tick or untick a column to show or hide it. Ticking a group heading shows or hides the whole group.</li><li>Use <strong>Show all</strong> / <strong>Hide all</strong> to change everything at once.</li><li>Select a column to see its details in the <strong>Properties</strong> panel.</li></ul>
+<div class="callout note"><strong>Important</strong> Hiding a column never deletes its data. Tick it again to bring it back.</div>
 </section>
-
-<!-- 4 ============================================================ -->
-<section class="chapter" id="logging" style="--c:var(--c-log)">
-  <div class="ch-head"><div class="ch-num">4</div><p class="ch-kicker">During the job</p><h2>Logging readings</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Start and stop monitoring</h3>
-      <ol class="steps">
-        <li><div>Set <span class="ui">Log interval</span> on the toolbar (1 to 300 seconds). This is how often a reading is saved, for example <span class="num">60 s</span> for one reading per minute.</div></li>
-        <li><div>Optional: tick <span class="ui">Average gaps</span> to save the average of the readings taken during each interval instead of a single reading.</div></li>
-        <li><div>Click the green <span class="ui">Start Monitoring</span> button (also in the <span class="ui">RealTime</span> menu). FlowTrace tries to connect up to 3 times and shows each attempt in the status.</div></li>
-        <li><div>The status changes to <strong>Live</strong> when the device answers, and readings appear in the Live Stream.</div></li>
-        <li><div>Click <span class="ui">Stop Monitoring</span> when the job is done. All logged data stays saved in the Project.</div></li>
-      </ol>
-      <div class="call note"><b class="k">Note</b><p>Log interval and Average gaps can only be changed while monitoring is stopped. The Log interval is saved with the Project, so it is the same the next time the Project opens.</p></div>
-    </div>
-    <div class="sec">
-      <h3>What happens while monitoring</h3>
-      <ul class="dots">
-        <li>Every Start creates a new logging <strong>session</strong>, so separate runs are never mixed together.</li>
-        <li>Each saved reading goes to the Project database and to a CSV file in the <em>Live Log CSV</em> folder of the export path, the moment it is read.</li>
-        <li>Live Stream, Data Table, Graphs and Monitoring View update automatically. Monitoring View refreshes every second.</li>
-        <li>Running totals (Cum Gas, Liquid / Oil / Water Cum) add the <strong>real time between readings</strong>. If logging stopped for a while, that gap is not counted as flow.</li>
-        <li>Alarms are checked on every logged reading (chapter 7).</li>
-      </ul>
-      <div class="call warn"><b class="k">Check</b><p>If the connection drops during a job, monitoring stops safely. Fix the cable or power and click <span class="ui">Start Monitoring</span> again. A new session starts and earlier data is kept.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="4-projects">4  Projects</h1>
+<p>A Project keeps everything for one job together: settings, channels, measurement columns, the database, CSV logs and exports. Switching Project switches all of it.</p>
+<figure><a href="images/40_open_project.png" target="_blank" rel="noopener"><img src="images/40_open_project.png" alt="Open Project window (Project &gt; Open Project...)" loading="lazy" style="width:44%"></a><figcaption>Figure 10: Open Project window (Project &gt; Open Project...)</figcaption></figure>
+<div class="tbl"><table><thead><tr><th>To do this</th><th>Use</th></tr></thead><tbody><tr><td>Start a new job with empty data</td><td>Project &gt; New Project...</td></tr><tr><td>Go back to an earlier job</td><td>Project &gt; Open Project...</td></tr><tr><td>Bring in a Project from another PC or a backup</td><td>Project &gt; Import Project...</td></tr><tr><td>Make a full copy of the current Project (backup or sharing)</td><td>File &gt; Save Project As...</td></tr></tbody></table></div>
+<div class="callout note"><strong>Important</strong> Opening, creating or importing a Project never deletes another Project. Import only copies the folder you choose.</div>
+<h2 id="quick-start-your-first-live-reading">Quick Start: your first live reading</h2>
+<ol><li><strong>Create a Project</strong> for the job: Project &gt; New Project..., type the well name, click OK.</li><li><strong>Connect the hardware.</strong> Plug the Modbus device (or USB-to-RS485 converter) into the computer and power it on.</li><li><strong>Set up the connection</strong> in System Config (chapter 5).</li><li><strong>Name your channels</strong> in Channels (chapter 5).</li><li><strong>Choose the Log interval</strong> in the toolbar, for example 60 s for one reading per minute.</li><li><strong>Click Start Monitoring.</strong> The status changes to Live when the device answers and readings appear in the Live Stream.</li></ol>
 </section>
-
-<!-- 5 ============================================================ -->
-<section class="chapter" id="viewing" style="--c:var(--c-log)">
-  <div class="ch-head"><div class="ch-num">5</div><p class="ch-kicker">Working with the data</p><h2>Viewing and editing data</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Live Stream</h3>
-      <p>The Live Stream tab lists the latest readings, oldest at the top and newest at the bottom, one column per channel (Fig 1.1).</p>
-      <ul class="dots">
-        <li>The table follows the newest reading. Scroll up to look at earlier rows; it stays there until you scroll back to the bottom.</li>
-        <li>Drag a column border to resize a column. Click <span class="ui">Refresh</span> to reload from the database.</li>
-      </ul>
-    </div>
-
-    <div class="sec">
-      <h3>Monitoring View</h3>
-      <div class="split">
-        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-          <p>A compact window with the current value of every channel and measurement column, grouped like the sidebar. Put it on a second screen in the control cabin.</p>
-          <ol class="steps">
-            <li><div>Click the <span class="ui">Monitoring View</span> tab. It opens as its own window.</div></li>
-            <li><div>Use the <span class="ui">Group</span> list to show one group, or <span class="ui">All Inputs</span>.</div></li>
-            <li><div>Values refresh every second while monitoring. Size and position are remembered.</div></li>
-          </ol>
-        </div>
-        <figure><img src="img/scada_popup.png" alt="Monitoring View window with groups Channels, Orifice Gas Meter, Liquid Measurement and their current values"><figcaption><b>Fig 5.1</b>Monitoring View with Channels, Orifice Gas Meter and Liquid Measurement groups.</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Data Table</h3>
-      <p>The main grid: one row per saved reading, one column per channel and measurement column. A band above the headings groups the columns (Date / Time, Choke, Channels, and each measurement).</p>
-      <figure><img src="img/datatable.png" alt="Data Table with grouped headings, a unit list under each heading, and rows of readings"><figcaption><b>Fig 5.2</b>Data Table with grouped headings and the unit list under each heading.</figcaption></figure>
-      <h4>Find the rows you need</h4>
-      <ol class="steps">
-        <li><div>Click <span class="ui">Filter</span> in the Data Table toolbar.</div></li>
-        <li><div>Set the Start and End date / time. Optional: choose an Interval Filter (seconds, minutes or hours) to show one row per interval.</div></li>
-        <li><div>Click <span class="ui">Apply Filter</span>. <span class="ui">Reset</span> returns to today's full day.</div></li>
-      </ol>
-      <h4>Toolbar buttons</h4>
-      <div class="tbl"><table>
-        <tr><th style="width:30%">Button</th><th>Use</th></tr>
-        <tr><td>Add Record</td><td>Add a reading by hand.</td></tr>
-        <tr><td>Delete Record</td><td>Remove the selected reading (you are asked to confirm).</td></tr>
-        <tr><td>Add Virtual Column</td><td>Add your own calculated column (chapter 6).</td></tr>
-        <tr><td>Reorder Columns</td><td>Change column order and visibility.</td></tr>
-        <tr><td>Refresh</td><td>Reload the table.</td></tr>
-        <tr><td>Auto Save</td><td>Saves the table to Excel on a timer. The small arrow sets the interval and opens the Auto Save folder.</td></tr>
-        <tr><td>Page controls</td><td>Rows per page and First / Previous / Next / Last for large data sets.</td></tr>
-      </table></div>
-      <h4>Headings, units and colours</h4>
-      <ul class="dots">
-        <li>Under every heading you can pick a <strong>unit label</strong> (psi, bar, °C, BPD, MMscfd...). It is a label only and never changes a value. To convert values, change the unit in Channels.</li>
-        <li>Green cells are values entered by the engineer (choke, BS&amp;W, orifice data).</li>
-        <li>A cell coloured red or yellow is a reading on which an alarm fired (chapter 7).</li>
-        <li><span class="ui">Grid › Resize Columns to Fit</span> sizes every column to its content.</li>
-      </ul>
-      <figure><img src="img/datatable_right.png" alt="Data Table scrolled right showing the Liquid Measurement group: measured rate, BS&amp;W, shrinkage, meter factors, liquid, water and oil rates and cumulatives"><figcaption><b>Fig 5.3</b>The Liquid Measurement group. Green cells hold engineer-entered values.</figcaption></figure>
-    </div>
-
-    <div class="sec">
-      <h3>Show or hide columns</h3>
-      <p>The <strong>Table Configuration</strong> sidebar on the left controls which columns are shown in the Data Table, the Database tab and Excel exports.</p>
-      <ol class="steps">
-        <li><div>Type in the sidebar search box to find a column.</div></li>
-        <li><div>Tick or untick a column. Ticking a group heading shows or hides the whole group.</div></li>
-        <li><div>Use <span class="ui">Show all</span> / <span class="ui">Hide all</span> to change everything at once.</div></li>
-      </ol>
-      <div class="call note"><b class="k">Note</b><p>Hiding a column never deletes its data. Tick it again to bring it back.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="5-device-connection-and-channels">5  Device Connection and Channels</h1>
+<h2 id="system-configuration">System Configuration</h2>
+<p>Click <strong>System Config</strong> in the menu bar (next to Help).</p>
+<figure><a href="images/39_system_config.png" target="_blank" rel="noopener"><img src="images/39_system_config.png" alt="System Configuration, Connection tab" loading="lazy" style="width:100%"></a><figcaption>Figure 11: System Configuration, Connection tab</figcaption></figure>
+<div class="tbl"><table><thead><tr><th>Setting</th><th>What to enter</th></tr></thead><tbody><tr><td>Connection type</td><td>Serial (RS-485 / COM port).</td></tr><tr><td>Port</td><td>The COM port of the device or converter (see Windows Device Manager). <strong>Auto Detect</strong> finds it for you.</td></tr><tr><td>Baudrate</td><td>Communication speed, for example 9600.</td></tr><tr><td>Parity</td><td>None, Even or Odd. Must match the device.</td></tr><tr><td>Stop Bits / Byte Size</td><td>Usually 1 and 8.</td></tr><tr><td>Timeout (s)</td><td>How long to wait for an answer before retrying.</td></tr><tr><td>Slave ID</td><td>The Modbus address of the device.</td></tr></tbody></table></div>
+<p>On the <strong>Storage</strong> tab you can change the Export Path (CSV logs and exports) and the Database Path. Click <strong>OK</strong> to save.</p>
+<div class="callout tip"><strong>Tip</strong> If you are not sure of the settings, check the device label or manual. A mismatch in Baudrate or Parity is the most common reason for no data.</div>
+<h2 id="channel-configuration">Channel Configuration</h2>
+<p>Channels are the sensor values FlowTrace reads from the device. Click <strong>Channels</strong> in the toolbar or <strong>Measurement &gt; Channels...</strong>.</p>
+<figure><a href="images/30_channels.png" target="_blank" rel="noopener"><img src="images/30_channels.png" alt="Channel Configuration" loading="lazy" style="width:100%"></a><figcaption>Figure 12: Channel Configuration</figcaption></figure>
+<ol><li>Set <strong>Start Register</strong> (the first register to read), <strong>Channel Count</strong> (1 to 125), <strong>Data Type</strong> and <strong>Word Order</strong>.</li><li>Fill in one row per channel (see the table below).</li><li>Use <strong>Test Read</strong> to check the values the device returns before you start.</li><li>Click <strong>OK</strong>. The new names and units appear in every tab.</li></ol>
+<div class="tbl"><table><thead><tr><th>Column</th><th>Use</th></tr></thead><tbody><tr><td>Sensor Name</td><td>A clear name, for example THP or Separator Temp.</td></tr><tr><td>Unit</td><td>The unit the value is shown in.</td></tr><tr><td>Formula</td><td>Click <strong>fx</strong> to open the Formula Builder when the raw value needs converting. Leave Linear for a direct reading.</td></tr><tr><td>Multiplier (x) / Offset (+)</td><td>Scale and shift the value for calibration.</td></tr><tr><td>Visible</td><td>Untick to hide a channel you do not need.</td></tr><tr><td>Alarm</td><td>Set warning / alarm levels for the channel (see chapter 9).</td></tr></tbody></table></div>
+<h2 id="start-and-stop-monitoring">Start and Stop Monitoring</h2>
+<ol><li>Set <strong>Log interval</strong> in the toolbar. Optionally tick <strong>Average gaps</strong>.</li><li>Click <strong>Start Monitoring</strong> (also in the RealTime menu). FlowTrace tries to connect up to 3 times and shows each attempt.</li><li>Click <strong>Stop Monitoring</strong> when the job is done.</li></ol>
+<ul><li>Every Start creates a new logging session, so separate runs are never mixed.</li><li>Each saved reading goes to the Project database and to a CSV file in the Live Log CSV folder.</li><li>The Live Stream, Data Table, Graphs and Monitoring View update automatically.</li></ul>
+<div class="callout note"><strong>Important</strong> Log interval and Average gaps can only be changed while monitoring is stopped.</div>
 </section>
-
-<!-- 6 ============================================================ -->
-<section class="chapter" id="measure" style="--c:var(--c-measure)">
-  <div class="ch-head"><div class="ch-num">6</div><p class="ch-kicker">Calculations on every reading</p><h2>Measurement columns</h2></div>
-  <div class="ch-body">
-    <p>The <span class="ui">Measurement</span> menu adds ready-made measurement columns. They all work the same way: pick the sensor channel for each input (or a fixed value where offered), enter the meter or job parameters, and save. The new columns appear as their own group in the Data Table, sidebar, Monitoring View, graphs and Excel exports.</p>
-
-    <div class="sec">
-      <h3>Liquid, Oil and Water Measurement</h3>
-      <div class="split">
-        <ol class="steps">
-          <li><div>Open <span class="ui">Measurement › Liquid Measurement Rate...</span> (or Oil / Water Measurement).</div></li>
-          <li><div>Assign the measured-rate sensor and, where asked, the temperature and pressure sensors, or switch to <span class="ui">Fixed</span> and type a value.</div></li>
-          <li><div>Enter BS&amp;W, Shrinkage, Meter Factor and Combine Meter Factor.</div></li>
-          <li><div>Enter the Starting Liquid, Water and Oil Cumulative if the job continues from earlier totals.</div></li>
-          <li><div>Choose the Output Unit and click <span class="ui">Calculate</span> to preview with the latest reading.</div></li>
-          <li><div>Click <span class="ui">Save Config</span> or <span class="ui">Save as Column</span>.</div></li>
-        </ol>
-        <figure><img src="img/d_liquid.png" alt="Liquid Measurement dialog with sensor assignment, BS&amp;W, shrinkage, meter factor, combine meter factor and starting cumulatives"><figcaption><b>Fig 6.1</b>Liquid Measurement set-up.</figcaption></figure>
-      </div>
-<div class="formula">Liquid Rate = Measured Rate <em>×</em> Meter Factor
-Water Rate  = Liquid Rate <em>×</em> BS&amp;W / 100
-Oil Rate    = Liquid Rate <em>×</em> (1 − BS&amp;W / 100) <em>×</em> Shrinkage <em>×</em> Combine Meter Factor</div>
-    </div>
-
-    <div class="sec">
-      <h3>Orifice Gas Flow (AGA-3)</h3>
-      <div class="split">
-        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-          <ol class="steps">
-            <li><div>Open <span class="ui">Measurement › Orifice Gas Flow...</span></div></li>
-            <li><div>Assign <strong>hw</strong> (differential pressure, inH₂O), <strong>Pf</strong> (flowing pressure, psig) and <strong>Tf</strong> (flowing temperature) channels. Tf can also be a fixed value. A Tf channel in °C is converted to °F automatically.</div></li>
-            <li><div>Enter orifice bore (d), pipe internal diameter (D), gas specific gravity, base pressure and temperature, k and Fpv.</div></li>
-            <li><div>Enter the Starting Cumulative Gas if the job continues from an earlier total.</div></li>
-            <li><div>Choose the Output Unit and click <span class="ui">Calculate</span>. Flow rate, beta ratio, cumulative gas and every correction factor are shown.</div></li>
-            <li><div>Click <span class="ui">Save Config</span> to add the Gas Rate and Cum Gas columns.</div></li>
-          </ol>
-<div class="formula">Q = C <em>×</em> √(hw <em>×</em> Pf)
-C = Fu <em>×</em> Fb <em>×</em> Fg <em>×</em> Y <em>×</em> Ftf <em>×</em> Fpv</div>
-          <ul class="dots">
-            <li>Discharge coefficient: Reader-Harris / Gallagher (ISO 5167-2), with the expansion factor Y.</li>
-            <li>Z-factor: DAK correlation from gas gravity, at flowing and base conditions.</li>
-          </ul>
-        </div>
-        <figure><img src="img/d_orifice.png" alt="Orifice Gas Flow dialog: Sep DP, Sep static and Sep temp channels, 1.25 in bore, 5.761 in pipe, gas gravity 1.1, result 7.2037 MMscf per day"><figcaption><b>Fig 6.2</b>Orifice set-up with a calculated result of 7.2037 MMscf/d.</figcaption></figure>
-      </div>
-      <div class="call warn"><b class="k">Check</b><p><span class="ui">Save Config</span> recalculates the gas rate and cumulative gas of the <strong>whole stored history</strong> with the settings in the dialog. Check bore, gravity and the Tf channel before saving on a running job.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>SF-DP Measurement</h3>
-      <div class="split">
-        <ol class="steps">
-          <li><div>Open <span class="ui">Measurement › SF-DP Measurement...</span></div></li>
-          <li><div>Choose the SF channel and the DP channel, or a fixed value for either.</div></li>
-          <li><div>Optional: under <strong>Warnings &amp; Alarms</strong>, switch on levels and set their limits (chapter 7).</div></li>
-          <li><div>Click <span class="ui">Save</span>. Three columns are added: SF, DP and the SF − DP difference.</div></li>
-          <li><div>Open the same menu item again to edit them.</div></li>
-        </ol>
-        <figure><img src="img/d_sfdp.png" alt="SF-DP Measurement dialog with SF and DP channel selection, Warnings and Alarms levels and live preview"><figcaption><b>Fig 6.3</b>SF-DP Measurement with its alarm levels.</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Choke Manager</h3>
-      <div class="split">
-        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-          <p>Record each choke change, so every reading shows the choke that was in service at that time.</p>
-          <ol class="steps">
-            <li><div>Open <span class="ui">Measurement › Choke Manager...</span></div></li>
-            <li><div>Click <span class="ui">Add Row</span> each time the choke is changed: date / time, choke size and choke type.</div></li>
-            <li><div>Pick the <span class="ui">Choke Size unit</span>: 1/64 in or mm (mm = x / 64 × 25.4). Values are always stored in 1/64 in.</div></li>
-            <li><div>Click <span class="ui">OK</span>. Every reading from that time onward shows that choke, until the next change.</div></li>
-          </ol>
-        </div>
-        <figure><img src="img/d_choke.png" alt="Choke Manager with two rows: 21-09-2026 16:53:20 choke 12/64 adjustable, 29-09-2026 01:31:51 choke 13/64"><figcaption><b>Fig 6.4</b>Choke log: 12/64 in from 21 Sep, 13/64 in from 29 Sep.</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Virtual columns</h3>
-      <ol class="steps">
-        <li><div>In the Data Table click <span class="ui">Add Virtual Column</span>.</div></li>
-        <li><div>Give the column a name and unit, and build the expression from your channels.</div></li>
-        <li><div>Save. The column is calculated for every reading, old and new, and can be shown, hidden and reordered like any other column.</div></li>
-      </ol>
-    </div>
-  </div>
+<section>
+<h1 id="6-viewing-data">6  Viewing Data</h1>
+<h2 id="live-stream">Live Stream</h2>
+<p>The Live Stream tab shows the 50 latest readings with one column per channel. The table follows the newest reading automatically.</p>
+<ul><li>Scroll up to look at earlier rows; the table stays where you are until you scroll back to the bottom.</li><li>Drag a column border to resize a column; your widths are kept.</li><li>Click <strong>Refresh</strong> to reload from the database.</li></ul>
+<h2 id="data-table">Data Table</h2>
+<figure><a href="images/02_data_table.png" target="_blank" rel="noopener"><img src="images/02_data_table.png" alt="Data Table with grouped headers: Date / Time, Choke, Channels and Orifice Gas Meter" loading="lazy" style="width:100%"></a><figcaption>Figure 13: Data Table with grouped headers: Date / Time, Choke, Channels and Orifice Gas Meter</figcaption></figure>
+<p>The Data Table is the main grid: one row per saved reading, one column per channel and measurement column.</p>
+<h3>Find the rows you need</h3>
+<ol><li>Click <strong>Filter</strong> in the Data Table toolbar.</li><li>Set the Start and End date / time.</li><li>Optional: choose an Interval Filter (seconds, minutes or hours) to show one row per interval.</li><li>Click <strong>Apply Filter</strong>. <strong>Reset</strong> returns to today's full day.</li></ol>
+<h3>Work with records</h3>
+<div class="tbl"><table><thead><tr><th>Button</th><th>Use</th></tr></thead><tbody><tr><td>Add Record</td><td>Add a reading by hand.</td></tr><tr><td>Edit Record</td><td>Change the selected reading.</td></tr><tr><td>Delete Record</td><td>Remove the selected reading (you are asked to confirm).</td></tr><tr><td>Add Virtual Column</td><td>Add your own calculated column.</td></tr><tr><td>Reorder Columns</td><td>Change the column order and visibility.</td></tr></tbody></table></div>
+<h3>Headings, units and colors</h3>
+<ul><li>A band above the headings groups the columns: Date / Time, Choke, Channels and each measurement.</li><li>Under every heading you can pick or type a unit label. It is a label only and never changes a value; to convert values, change the unit in Channels.</li><li>Green cells are values entered by the engineer (choke, BS&amp;W, orifice data); a darker shade marks the row where the value was changed.</li><li>Double-click an editable cell to change it directly.</li><li><strong>Auto Save</strong> saves the table to Excel on a timer; the arrow next to it sets the interval.</li><li>Use rows-per-page and the First / Previous / Next / Last buttons to move through large data sets.</li><li>Sensor re-wired to another channel mid-job? Right-click that channel heading and choose <strong>Sensor moved to another channel...</strong>; earlier readings stay on the old channel.</li></ul>
+<h3>Column order and visibility</h3>
+<figure><a href="images/41_column_order.png" target="_blank" rel="noopener"><img src="images/41_column_order.png" alt="Manage Table Columns (File &gt; Column Order / Visibility...)" loading="lazy" style="width:47%"></a><figcaption>Figure 14: Manage Table Columns (File &gt; Column Order / Visibility...)</figcaption></figure>
+<p>Untick a column to hide it and drag to change the order. <strong>Reset Order</strong> restores the default order.</p>
+<h2 id="monitoring-view">Monitoring View</h2>
+<p>Monitoring View is a compact window with the current value of every channel and measurement column, grouped the same way as the sidebar. Click the <strong>Monitoring View</strong> tab; it opens as a separate window you can keep beside the main window or move to a second screen.</p>
+<figure><a href="images/08_monitoring_view.png" target="_blank" rel="noopener"><img src="images/08_monitoring_view.png" alt="Monitoring View window" loading="lazy" style="width:49%"></a><figcaption>Figure 15: Monitoring View window</figcaption></figure>
+<ul><li>Use the <strong>Group</strong> filter to show one group only, or All Inputs for everything.</li><li>Values refresh every second while monitoring.</li><li>Clicking the tab again brings the same window to the front; its size and position are remembered.</li></ul>
+<h2 id="key-parameters">Key Parameters</h2>
+<p>Key Parameters shows the channels you choose as large cards that can be read from across the cabin. Like Monitoring View, it opens as its own window.</p>
+<figure><a href="images/07_key_parameters.png" target="_blank" rel="noopener"><img src="images/07_key_parameters.png" alt="Key Parameters window" loading="lazy" style="width:100%"></a><figcaption>Figure 16: Key Parameters window</figcaption></figure>
+<ul><li><strong>Choose Channels...</strong> picks the cards to show.</li><li><strong>Size</strong> sets the card size and <strong>Background...</strong> the card color.</li><li>Each card shows the channel number, name, value and unit.</li></ul>
 </section>
-
-<!-- 7 ============================================================ -->
-<section class="chapter" id="alarms" style="--c:var(--c-alarm)">
-  <div class="ch-head"><div class="ch-num">7</div><p class="ch-kicker">Safety</p><h2>Alarms</h2></div>
-  <div class="ch-body">
-    <p>Any Data Table column can have up to 5 alarm levels: channels, Gas Rate, Cum Gas, Liquid / Oil / Water, SF-DP and virtual columns. Each level is <strong>High</strong> (value at or above the limit) or <strong>Low</strong> (at or below), with its own name, limit, colour, popup and sound.</p>
-
-    <div class="sec">
-      <h3>Set alarm levels</h3>
-      <p>Open the level editor from any of these places:</p>
-      <ul class="dots">
-        <li>Channel Configuration: the <span class="ui">Alarm</span> button on the channel's row.</li>
-        <li>Data Table: right-click the column heading › <span class="ui">🔔 Alarm...</span></li>
-        <li>SF-DP Measurement: the Warnings &amp; Alarms box.</li>
-      </ul>
-      <figure><img src="img/a_channel_alarm.png" alt="Alarm level editor for THP V5: High Warning at or above 620 psi without popup, High Alarm at or above 625 psi with popup and buzzer, repeat after acknowledge 60 s"><figcaption><b>Fig 7.1</b>Two levels on THP V5: High Warning ≥ 620 psi (colour only) and High Alarm ≥ 625 psi (popup + buzzer).</figcaption></figure>
-      <ol class="steps">
-        <li><div>Tick the box at the start of a row to switch the level on.</div></li>
-        <li><div>Type the level name, choose <span class="ui">High ≥</span> or <span class="ui">Low ≤</span> and enter the limit.</div></li>
-        <li><div>Click the colour box to pick the cell colour.</div></li>
-        <li><div>Tick <span class="ui">Popup</span> and / or <span class="ui">Sound</span>, choose the sound (buzzer, chime...) and press ▶ to hear it.</div></li>
-        <li><div>Use <span class="ui">＋ Add Level</span> for more levels and ✕ to remove one.</div></li>
-        <li><div>Set <span class="ui">Repeat after Acknowledge</span>: if the value is still past the limit after this time, the alarm comes back.</div></li>
-        <li><div>Click <span class="ui">OK</span>.</div></li>
-      </ol>
-    </div>
-
-    <div class="sec">
-      <h3>When an alarm fires</h3>
-      <div class="split">
-        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
-          <ul class="dots">
-            <li>A popup shows the level, value, limit and reading time, and the sound plays until someone responds.</li>
-            <li>Only the reading the alarm fired on is coloured in the Data Table (also in Export Data).</li>
-            <li>The status-bar alarm chip turns red while an alarm is not acknowledged.</li>
-            <li>Every event goes to the project's <em>Alarm Log.csv</em>.</li>
-          </ul>
-          <ol class="steps">
-            <li><div>Press <span class="ui">Mute</span> to stop the sound (logged as SILENCED).</div></li>
-            <li><div>Press <span class="ui">Acknowledge</span> once the situation is handled (logged as ACKNOWLEDGED).</div></li>
-          </ol>
-          <div class="call note"><b class="k">Note</b><p>The popup stays open until acknowledged, even if the value has returned to normal, so a short spike is never missed. A small deadband stops a value hovering on the limit from alarming on every reading.</p></div>
-        </div>
-        <figure class="small"><img src="img/a_popup.png" alt="Alarm popup: High Alarm, THP V5 has reached High Alarm, value 627.00 psi, limit 625.00 psi, time 03-10-2026 12:16:07, Mute and Acknowledge buttons"><figcaption><b>Fig 7.2</b>Alarm popup.</figcaption></figure>
-      </div>
-      <div class="duo">
-        <figure><img src="img/a_dt_crop.png" alt="Data Table rows with THP V5 627.0 in red and 621.0 in yellow"><figcaption><b>Fig 7.3</b>The readings that crossed a level, coloured in the Data Table.</figcaption></figure>
-        <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
-          <h4>Colour key used in this example</h4>
-          <div class="legend"><span><i style="background:#FEE2E2"></i>High Alarm (red)</span><span><i style="background:#FEF3C7"></i>High Warning (yellow)</span><span><i style="background:#DBEAFE"></i>Low Pressure (blue)</span></div>
-          <p>The colours are your own choice per level. Pick colours that are easy to tell apart on the crew's screens.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Alarms window and Alarm Log</h3>
-      <p>Open it from <span class="ui">Alarms › Active Alarms &amp; Alarm Log...</span> or by clicking the status-bar alarm chip.</p>
-      <figure><img src="img/a_center_c.png" alt="Alarms window: Active alarms table and the Alarm Log with ALARM and RETURN TO NORMAL events for THP V5 and Sep static"><figcaption><b>Fig 7.4</b>Alarms window: active alarms on top, the Alarm Log below.</figcaption></figure>
-      <div class="tbl"><table>
-        <tr><th style="width:30%">Event</th><th>Logged when</th></tr>
-        <tr><td>ALARM</td><td>A reading reaches a level's limit.</td></tr>
-        <tr><td>SILENCED</td><td>Mute is pressed on the popup.</td></tr>
-        <tr><td>ACKNOWLEDGED</td><td>Acknowledge is pressed (or Acknowledge All).</td></tr>
-        <tr><td>RETURN TO NORMAL</td><td>The value moves back past the limit.</td></tr>
-      </table></div>
-      <ul class="dots">
-        <li><span class="ui">Acknowledge All</span> or <span class="ui">Ctrl+Shift+A</span> acknowledges every active alarm.</li>
-        <li>Filter the log with <span class="ui">Show</span> and the search box; <span class="ui">Save Log As...</span> exports it.</li>
-        <li>Alarms are checked on logged readings, so they follow the selected Log interval.</li>
-      </ul>
-    </div>
-  </div>
+<section>
+<h1 id="7-measurement-tools">7  Measurement Tools</h1>
+<p>The Measurement menu adds ready-made measurement columns to your data. They all work the same way:</p>
+<ol><li>Open the tool from the <strong>Measurement</strong> menu.</li><li>Choose which sensor channel feeds each input, or enter a fixed value where offered.</li><li>Enter the meter or job parameters.</li><li>Click <strong>Save as Column</strong> / <strong>Save Config</strong>.</li></ol>
+<p>The new columns appear as their own group in the Data Table, the sidebar, Monitoring View and Excel exports, and are filled in automatically for every reading.</p>
+<div class="callout note"><strong>Important</strong> When you change parameters later, the new values apply from that moment on. Readings already logged keep the values they were calculated with.</div>
+<h2 id="orifice-gas-flow-aga-3">Orifice Gas Flow (AGA-3)</h2>
+<figure><a href="images/32_orifice.png" target="_blank" rel="noopener"><img src="images/32_orifice.png" alt="DP / Gas Rate Configuration (Measurement &gt; Orifice Gas Flow...)" loading="lazy" style="width:93%"></a><figcaption>Figure 17: DP / Gas Rate Configuration (Measurement &gt; Orifice Gas Flow...)</figcaption></figure>
+<ol><li>Open <strong>Measurement &gt; Orifice Gas Flow...</strong> and tick <strong>Enable Gas Rate Calculation</strong>.</li><li>Under Sensor Channel Assignment choose the <strong>hw</strong> (differential pressure), <strong>Pf</strong> (flowing pressure) and <strong>Tf</strong> (flowing temperature) channels. Tf can also be a fixed value.</li><li>Enter the orifice bore diameter, pipe internal diameter, gas specific gravity, base pressure and temperature, k, Fpv and the starting cumulative gas.</li><li>Choose the output unit.</li><li>Click <strong>Calculate</strong> to preview with the latest reading.</li><li>Click <strong>Save as Column</strong> to add the gas rate and cumulative gas columns.</li></ol>
+<p>The gas rate follows the AGA-3 orifice equation: Q = C × √(hw × Pf), where C = Fu × Fb × Fg × Y × Ftf × Fpv. A Tf channel is read in °C and converted to °F for the calculation.</p>
+<div class="callout tip"><strong>Tip</strong> If the orifice plate is changed during the job, double-click the bore diameter cell in the Data Table at the row where it changed. The new value applies from that row onward.</div>
+<h2 id="liquid-oil-and-water-measurement">Liquid, Oil and Water Measurement</h2>
+<figure><a href="images/31_liquid.png" target="_blank" rel="noopener"><img src="images/31_liquid.png" alt="Liquid Measurement Rate Configuration" loading="lazy" style="width:89%"></a><figcaption>Figure 18: Liquid Measurement Rate Configuration</figcaption></figure>
+<ol><li>Open <strong>Measurement &gt; Liquid Measurement Rate...</strong>, <strong>Oil Measurement...</strong> or <strong>Water Measurement...</strong>.</li><li>Assign the measured rate sensor and, where asked, the temperature and pressure sensors (or fixed values).</li><li>Enter BS&amp;W, shrinkage, meter factor, combine meter factor and starting cumulatives.</li><li>Choose the output unit and click <strong>Save as Column</strong>. Rate and cumulative columns are added and fill in automatically.</li></ol>
+<p>Liquid Rate = Measured Rate × Meter Factor; Water Rate = Liquid Rate × BS&amp;W / 100; Oil Rate = Liquid Rate × (1 − BS&amp;W / 100) × Shrinkage × Combine Meter Factor.</p>
+<h2 id="sf-dp-measurement">SF-DP Measurement</h2>
+<figure><a href="images/35_sfdp.png" target="_blank" rel="noopener"><img src="images/35_sfdp.png" alt="SF-DP Measurement" loading="lazy" style="width:100%"></a><figcaption>Figure 19: SF-DP Measurement</figcaption></figure>
+<ol><li>Open <strong>Measurement &gt; SF-DP Measurement...</strong>.</li><li>Choose the SF channel and the DP channel (or a fixed value for either) and an optional unit.</li><li>Optional: under <strong>Warnings &amp; Alarms</strong> add levels (High or Low), each with a limit, color, popup and sound.</li><li>Click <strong>Save</strong>. The SF − DP value is calculated for every reading.</li></ol>
+<h2 id="choke-manager">Choke Manager</h2>
+<figure><a href="images/36_choke.png" target="_blank" rel="noopener"><img src="images/36_choke.png" alt="Choke Manager with three choke changes" loading="lazy" style="width:65%"></a><figcaption>Figure 20: Choke Manager with three choke changes</figcaption></figure>
+<p>Record the choke size and type used during the test, so every reading shows the choke in service at that time.</p>
+<ol><li>Open <strong>Measurement &gt; Choke Manager...</strong>.</li><li>Click <strong>Add Row</strong> each time the choke is changed and enter the date / time, choke size and choke type.</li><li>Choose the <strong>Choke Size unit</strong>.</li><li>Click <strong>OK</strong>. Every reading from that time on shows that choke, until the next change.</li></ol>
+<h2 id="virtual-columns">Virtual Columns</h2>
+<ol><li>In the Data Table click <strong>Add Virtual Column</strong>.</li><li>Give the column a name and unit.</li><li>Build the expression from your channels in the Formula Builder.</li><li>Save. The column is calculated for every reading, old and new.</li></ol>
+<div class="callout tip"><strong>Tip</strong> Virtual columns appear in the sidebar, so they can be shown, hidden and reordered like any other column.</div>
 </section>
-
-<!-- 8 ============================================================ -->
-<section class="chapter" id="graphs" style="--c:var(--c-graph)">
-  <div class="ch-head"><div class="ch-num">8</div><p class="ch-kicker">Trends</p><h2>Graphs and Graph Studio</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Graphs</h3>
-      <figure><img src="img/graphs.png" alt="Graphs tab, Flowrate profile, 21 to 29 September 2026, THP V5, THT V5 and THT V10A in separate tracks with the reading table below"><figcaption><b>Fig 8.1</b>Graphs tab, Multi-Track view, 21–29 September.</figcaption></figure>
-      <ol class="steps">
-        <li><div>Open the <span class="ui">Graphs</span> tab and click <span class="ui">Select Channels</span> to choose the channels, their Y-axis and line colour.</div></li>
-        <li><div>Click <span class="ui">Filter</span>, set the date / time range and interval, then <span class="ui">Apply Filter</span>. <span class="ui">Reset</span> clears the filter.</div></li>
-        <li><div>Optional: tick <span class="ui">Multi-Track</span> to give each channel its own band.</div></li>
-        <li><div>Hover over a line to read the exact value and time. Right-click the chart to add, edit or remove an annotation.</div></li>
-      </ol>
-      <div class="tbl"><table>
-        <tr><th style="width:30%">To do this</th><th>Do</th></tr>
-        <tr><td>Zoom the time axis</td><td>Scroll the mouse wheel over the chart.</td></tr>
-        <tr><td>Move along time</td><td>Drag inside the chart.</td></tr>
-        <tr><td>Move or stretch a Y-axis</td><td>Drag the axis up or down; drag near its top or bottom end to stretch it.</td></tr>
-        <tr><td>Lock an edge</td><td>Click a padlock at a chart corner: top padlocks fix the Y-axis tops, bottom padlocks fix the time start / end.</td></tr>
-        <tr><td>Keep several graphs</td><td>Use the profile strip above the chart (for example <em>Flowback</em>, <em>Flowrate</em>): <b>+</b> adds, <b>−</b> removes, right-click renames.</td></tr>
-        <tr><td>Export or reset</td><td><span class="ui">Graph Actions</span>: Export Graph Data (Excel), Export Graph as PDF, Reset View, Full Screen.</td></tr>
-      </table></div>
-    </div>
-
-    <div class="sec">
-      <h3>Graph Only and Full Screen</h3>
-      <div class="split">
-        <ul class="dots">
-          <li>The <span class="ui">Graph Only</span> tab shows the same chart with nothing else on screen, ideal for a second monitor. It has the same profile strip and locks, <span class="ui">Reset</span> and <span class="ui">Refresh Graph</span>.</li>
-          <li><span class="ui">Plot › Full Screen Graph</span> fills the whole screen. Press <span class="ui">Esc</span> to leave.</li>
-        </ul>
-        <figure><img src="img/graphonly.png" alt="Graph Only tab showing the full chart without other panels"><figcaption><b>Fig 8.2</b>Graph Only.</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Graph Studio: PDF reports</h3>
-      <figure><img src="img/studio.png" alt="Graph Studio: settings panel on the left and the report page with FlowTrace, ABC Energy and XYZ Oil &amp; Gas logos, heading WELL-1 and the trend chart"><figcaption><b>Fig 8.3</b>Graph Studio with logos and the well name in the report header.</figcaption></figure>
-      <ol class="steps">
-        <li><div><span class="ui">Template</span>: pick a saved template or create a new one.</div></li>
-        <li><div><span class="ui">Report heading</span>: type the title, subtitle, footer and notes.</div></li>
-        <li><div><span class="ui">Report header</span>: type the well name. Click a dashed <span class="ui">+ logo</span> box to add a logo (left = your company, right = client or partner); right-click a box to change or remove it.</div></li>
-        <li><div><span class="ui">Channels</span>: tick what to plot, pick colour and axis, then set the time range.</div></li>
-        <li><div><span class="ui">Display</span>: adjust colours, axes and style.</div></li>
-        <li><div>Click <span class="ui">Export PDF</span> and choose where to save. The PDF matches the preview exactly.</div></li>
-      </ol>
-      <div class="call tip"><b class="k">Tip</b><p>Save the look as a Template once and reuse it for every well. Templates keep the style, not the data. The report page always prints on white paper, whichever theme is used.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="8-graphs">8  Graphs</h1>
+<h2 id="graphs-tab">Graphs Tab</h2>
+<figure><a href="images/03_graphs.png" target="_blank" rel="noopener"><img src="images/03_graphs.png" alt="Graphs tab: THP, CHP, WHT and Gas Rate over a six-hour flowback test" loading="lazy" style="width:100%"></a><figcaption>Figure 21: Graphs tab: THP, CHP, WHT and Gas Rate over a six-hour flowback test</figcaption></figure>
+<ol><li>Open the <strong>Graphs</strong> tab.</li><li>Click <strong>Select Channels</strong> to choose the channels to plot, their Y-axis and line color.</li><li>Click <strong>Filter</strong>, set the date / time range and interval, then <strong>Apply Filter</strong>. <strong>Reset</strong> clears the filter.</li><li>Optional: tick <strong>Multi-Track</strong> to give each channel its own band.</li></ol>
+<ul><li>Hover over a line to read the exact value and time.</li><li>Right-click the chart to add, edit or remove an annotation.</li><li>The table under the chart lists the plotted values.</li></ul>
+<h3>Zoom, move and lock</h3>
+<ul><li>Scroll the mouse wheel over the chart to zoom the time axis; drag inside the chart to move along time.</li><li>Grab a Y-axis and drag it up or down to move it; drag near its top or bottom end to stretch it.</li><li>The padlocks at the chart corners lock an edge: the two top padlocks fix the Y-axis tops, the two bottom padlocks fix the time start / end.</li></ul>
+<h3>Graph profiles</h3>
+<p>The strip above the chart holds separate saved graphs, each with its own channels, axes and locks. Click <strong>+</strong> to add a graph, <strong>−</strong> to remove the current one, and click a name to switch. Right-click a name to rename it.</p>
+<h3>Graph Actions menu</h3>
+<ul><li><strong>Export Graph Data</strong>: the plotted data to Excel.</li><li><strong>Export Graph as PDF</strong>.</li><li><strong>Reset View</strong>: undo zoom, moves and locks.</li><li><strong>Full Screen</strong>: press Esc to leave.</li></ul>
+<h2 id="graph-only-and-full-screen">Graph Only and Full Screen</h2>
+<figure><a href="images/04_graph_only.png" target="_blank" rel="noopener"><img src="images/04_graph_only.png" alt="Graph Only tab" loading="lazy" style="width:100%"></a><figcaption>Figure 22: Graph Only tab</figcaption></figure>
+<p>The Graph Only tab shows the same chart with nothing else on screen, ideal for a second monitor. <strong>Plot &gt; Full Screen Graph</strong> fills the whole screen; press Esc to exit.</p>
+<h2 id="graph-studio-pdf-reports">Graph Studio (PDF Reports)</h2>
+<figure><a href="images/05_graph_studio.png" target="_blank" rel="noopener"><img src="images/05_graph_studio.png" alt="Graph Studio report page preview" loading="lazy" style="width:100%"></a><figcaption>Figure 23: Graph Studio report page preview</figcaption></figure>
+<p>Graph Studio builds a finished report page: header band with logos, title, subtitle, chart, notes and footer.</p>
+<ol><li><strong>Template</strong>: pick a saved template or create a new one.</li><li><strong>Report heading</strong>: type the title, subtitle, footer and notes.</li><li><strong>Report header</strong>: type the well name. Click a dashed logo box to add a logo (left = your company, right = client).</li><li><strong>Channels</strong>: choose what to plot and set the time range.</li><li><strong>Display</strong>: adjust colors, axes and style.</li><li>Click <strong>Export PDF</strong> and choose where to save the file. The PDF matches the preview exactly.</li></ol>
+<div class="callout tip"><strong>Tip</strong> Save the look as a Template once and reuse it for every well. Templates keep the style only, not the data.</div>
 </section>
-
-<!-- 9 ============================================================ -->
-<section class="chapter" id="reports" style="--c:var(--c-report)">
-  <div class="ch-head"><div class="ch-num">9</div><p class="ch-kicker">Paperwork</p><h2>EOWR and Excel exports</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>EOWR Report (End of Well Report)</h3>
-      <figure><img src="img/eowr.png" alt="EOWR Report Generator: Content ZIP, Format Template, Company and Client logos, Output Folder, Section Mapping and Report Details"><figcaption><b>Fig 9.1</b>EOWR Report Generator.</figcaption></figure>
-      <ol class="steps">
-        <li><div><strong>Source Files</strong>: choose the content ZIP (PDFs, images, Office files), the Word format template (a default is provided) and the output folder.</div></li>
-        <li><div><strong>Logos</strong> (optional): <span class="ui">Choose Logo...</span> next to Company Logo (left of the page header) and Client Logo (right, and on the cover). <span class="ui">Use Template Logo</span> switches back.</div></li>
-        <li><div><strong>Section Mapping</strong>: click <span class="ui">Analyze ZIP</span> and check which section each file goes into.</div></li>
-        <li><div><strong>Report Details</strong>: fill in contract number, project, service company and client.</div></li>
-        <li><div>Click <span class="ui">Generate Report</span> and wait for the progress bar. Then <span class="ui">Open DOCX</span>, <span class="ui">Open PDF</span> or <span class="ui">Open Output Folder</span>.</div></li>
-      </ol>
-      <div class="call note"><b class="k">Note</b><p>Converting Word, Excel and PowerPoint files needs Microsoft Office on this computer. Otherwise convert them to PDF before putting them in the ZIP.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>Export Data to Excel</h3>
-      <ol class="steps">
-        <li><div>Filter the Data Table to the rows you want and choose the columns in the sidebar.</div></li>
-        <li><div>Click <span class="ui">Export Data</span> (toolbar, File menu or Report menu) and choose where to save.</div></li>
-      </ol>
-      <p>The workbook has the same grouped headers as the Data Table, alarm colours, and an image of the current graph.</p>
-      <div class="call warn"><b class="k">Check</b><p>If the export fails, the target file is probably open in Excel. Close it and export again.</p></div>
-    </div>
-  </div>
+<section>
+<h1 id="9-alarms">9  Alarms</h1>
+<p>Any Data Table column can have an alarm: channels, gas rate, cumulative gas, liquid / oil / water, SF-DP and virtual columns.</p>
+<ol><li>In the Data Table, right-click the column heading and choose <strong>Alarm...</strong>.</li><li>Add up to 5 levels. Each level is <strong>High</strong> (at or above the limit) or <strong>Low</strong> (at or below) with its own name, limit, color, popup and sound.</li><li>Set <strong>Repeat after Acknowledge</strong> if the alarm should come back while the value stays past the limit.</li></ol>
+<p>Channels can also be set in Measurement &gt; Channels (Alarm column), and SF-DP in its own window.</p>
+<figure><a href="images/37_alarms.png" target="_blank" rel="noopener"><img src="images/37_alarms.png" alt="Alarms window: active alarms and Alarm Log" loading="lazy" style="width:100%"></a><figcaption>Figure 24: Alarms window: active alarms and Alarm Log</figcaption></figure>
+<ul><li><strong>Alarms &gt; Active Alarms &amp; Alarm Log...</strong> lists the alarms that are active now and every alarm event.</li><li><strong>Acknowledge All</strong> (Ctrl+Shift+A) acknowledges every active alarm.</li><li>Every alarm, acknowledge and return to normal is written to the Project's Alarm Log. <strong>Save Log As...</strong> saves a copy.</li><li><strong>Fire Extinguisher Expiry — Check Now</strong> shows the fire extinguisher expiry alarm at once instead of waiting for the scheduled day / night reminder.</li></ul>
 </section>
-
-<!-- 10 =========================================================== -->
-<section class="chapter" id="calib" style="--c:var(--c-report)">
-  <div class="ch-head"><div class="ch-num">10</div><p class="ch-kicker">Field paperwork</p><h2>Calibration Reports and MMT</h2></div>
-  <div class="ch-body">
-    <p>The <span class="ui">Calibration Reports</span> tab holds 15 ready-made field-report templates, one sub-tab each. Every template keeps any number of saved copies, is saved with the Project, and exports to PDF. The MMT tab (Challan and MMR) works with the same editor.</p>
-
-    <div class="sec">
-      <h3>How a report editor is laid out</h3>
-      <figure><img src="img/calib.png" alt="Barton Chart Recorder calibration check: form on the left with saved copy, logos, report title, details and readings; printed preview on the right" loading="lazy"><figcaption><b>Fig 10.1</b>Barton Chart Recorder report. Left: the form you fill in. Right: the page exactly as it prints.</figcaption></figure>
-      <div class="tbl"><table>
-        <tr><th style="width:28%">Part</th><th>What it does</th></tr>
-        <tr><td>Saved copy</td><td>Pick a saved report. <span class="ui">New</span> starts an empty one, <span class="ui">Duplicate</span> copies the current one (ideal for the next check), <span class="ui">Rename</span>, <span class="ui">Delete</span>.</td></tr>
-        <tr><td>Left Logo / Right Logo</td><td>Your company logo and the client logo on the page header. <span class="ui">Reset Logos</span> clears them.</td></tr>
-        <tr><td>Report Title</td><td>The heading of the report. Tick <span class="ui">Front page</span> to put a big title, the details and signatures on page 1, and the tables and layout from page 2.</td></tr>
-        <tr><td>Company name &amp; address</td><td>Letterhead text, where the template has one.</td></tr>
-        <tr><td>Details</td><td>Field / value table (unit, location, date, serial numbers...). <span class="ui">+ Row</span> / <span class="ui">- Row</span>; double-click a heading to rename it.</td></tr>
-        <tr><td>Text Above Table</td><td>Optional text printed above the readings.</td></tr>
-        <tr><td>Readings tables</td><td>Each table has a heading and a note below it. Error columns and average % error are worked out for you. Some templates add tables with <span class="ui">+ Add Table</span> or <span class="ui">+ Add Meter</span>.</td></tr>
-        <tr><td>Site Layout</td><td>Layout drawings, one or more pages: <span class="ui">+ Add Page</span>, <span class="ui">Edit Layout...</span> (opens the Layout Editor, chapter 11), <span class="ui">Remove Layout</span>, <span class="ui">Show in report</span>, <span class="ui">Start on a new page</span>.</td></tr>
-        <tr><td>Images</td><td><span class="ui">+ Add Image...</span> for photos, each with a caption, <span class="ui">Adjust...</span> (crop / size) and <span class="ui">Remove</span>.</td></tr>
-        <tr><td>Text below table, footer, signatures</td><td>Closing notes, a footer such as the form version, and the signature names (Done By, Site Supervisor, Client Representative...).</td></tr>
-        <tr><td>Reset to Template / Export PDF</td><td>Put the current copy back to the template text, or save it as a PDF.</td></tr>
-      </table></div>
-      <div class="call note"><b class="k">Note</b><p>Grey italic text in a field is an example value from the template (SWTU-01, MWP-12, XYZ). It only shows what goes where and is never printed in the PDF; an empty field prints blank.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>Make a calibration report</h3>
-      <ol class="steps">
-        <li><div>Open <span class="ui">Calibration Reports</span> and click the template's sub-tab (use the ◂ ▸ arrows at the right for the last ones).</div></li>
-        <li><div>Click <span class="ui">New</span>, or pick the last report and click <span class="ui">Duplicate</span>.</div></li>
-        <li><div>Add the logos once with <span class="ui">Left Logo...</span> and <span class="ui">Right Logo...</span></div></li>
-        <li><div>Fill in the Details: unit, location, check date, instrument serial numbers and calibration due dates.</div></li>
-        <li><div>Type the readings into the table. The error and average % error fill in by themselves.</div></li>
-        <li><div>Add notes, signature names and, where needed, a layout or photos.</div></li>
-        <li><div>Check the preview on the right and click <span class="ui">Export PDF</span>.</div></li>
-      </ol>
-    </div>
-
-    <div class="sec">
-      <h3>The 15 templates</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:22%">Sub-tab</th><th style="width:30%">Report title</th><th>What it records</th></tr>
-        <tr><td>Barton Chart Recorder</td><td>Barton Chart Recorder Calibration Check Report</td><td>Dead-weight tester pressure against the chart recorder reading; error per point.</td></tr>
-        <tr><td>DP Sensor</td><td>DP Sensor Calibration Check Report</td><td>Manometer (inch WC) against the DP sensor; error per point.</td></tr>
-        <tr><td>DP Chart Recorder</td><td>DP Chart Recorder Calibration Check Report</td><td>Manometer (inch WC) against the DP chart recorder; error per point.</td></tr>
-        <tr><td>Meter Factor</td><td>Meter Factor Calibration Report</td><td>Meter and surge-tank initial / final readings per run; meter factor and average meter factor. One table per meter (+ Add Meter).</td></tr>
-        <tr><td>ESD Function Test</td><td>ESD System Function Test Report</td><td>Each ESD item with location, shut-in time and remarks.</td></tr>
-        <tr><td>Ignition Function Test</td><td>Ignition System Function Test Report</td><td>Equipment, configuration and test result.</td></tr>
-        <tr><td>Earth Resistance</td><td>Resistance Measurement Sheet</td><td>Earth rod number, resistance (ohm) and remarks.</td></tr>
-        <tr><td>First-Aid Box</td><td>First-Aid Box</td><td>Items with quantity and expiry date, plus the refilling / inspection chart.</td></tr>
-        <tr><td>Hi-Lo Pilot</td><td>Hi Pilots Calibration</td><td>Calibration statement for the Hi-Hi pilots (for example tested at 100 psi on the surge tank and 1000 psi downstream of the choke manifold), location, well and unit, witnessed by the client.</td></tr>
-        <tr><td>Noise Survey</td><td>Noise Survey Report</td><td>Location and noise level (dB), with a site layout showing the readings.</td></tr>
-        <tr><td>Illumination Survey</td><td>Illumination Survey Report</td><td>Location and illumination level (lux), with a site layout.</td></tr>
-        <tr><td>Fire Extinguisher Layout</td><td>Fire Extinguisher Layout</td><td>Extinguisher list (type, capacity, serial no., refill and expiry dates) and the layout with each extinguisher marked.</td></tr>
-        <tr><td>Mock Drill Report</td><td>Mock Drill Report (Non-IRT)</td><td>Drill date and times, scenario, events, observers and observations, with letterhead and cover page.</td></tr>
-        <tr><td>SWT Layout</td><td>SWT Layout</td><td>The surface well test equipment layout drawing.</td></tr>
-        <tr><td>Wellpad Escape Route</td><td>Wellpad Escape Route</td><td>Escape route drawing over several layout pages.</td></tr>
-      </table></div>
-      <div class="call tip"><b class="k">Tip</b><p>Meter Factor: enter the <strong>surge tank factor</strong> (bbl per tank unit, for example 0.1088 bbl/cm) above each table, then the meter and tank readings of each run. Use <span class="ui">+ Add Meter</span> for a second meter (oil and water turbine meters).</p></div>
-      <div class="duo">
-        <figure><img src="img/cal_meter_factor.png" alt="Calibration Reports, Meter Factor template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.3</b>Meter Factor</figcaption></figure>
-        <figure><img src="img/cal_esd.png" alt="Calibration Reports, ESD Function Test template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.4</b>ESD Function Test</figcaption></figure>
-        <figure><img src="img/cal_first_aid.png" alt="Calibration Reports, First-Aid Box template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.5</b>First-Aid Box</figcaption></figure>
-        <figure><img src="img/cal_noise.png" alt="Calibration Reports, Noise Survey template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.6</b>Noise Survey</figcaption></figure>
-        <figure><img src="img/cal_fire_layout.png" alt="Calibration Reports, Fire Extinguisher Layout template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.7</b>Fire Extinguisher Layout</figcaption></figure>
-        <figure><img src="img/cal_mock_drill.png" alt="Calibration Reports, Mock Drill Report template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.8</b>Mock Drill Report</figcaption></figure>
-        <figure><img src="img/cal_earth.png" alt="Calibration Reports, Earth Resistance template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.9</b>Earth Resistance</figcaption></figure>
-        <figure><img src="img/cal_escape_route.png" alt="Calibration Reports, Wellpad Escape Route template: form on the left, preview on the right" loading="lazy"><figcaption><b>Fig 10.10</b>Wellpad Escape Route</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>MMT: GST Challan</h3>
-      <figure><img src="img/mmt_challan.png" alt="MMT Challan: seller, consignee and buyer details on the left, Delivery Note preview with goods table and amount in words on the right" loading="lazy"><figcaption><b>Fig 10.11</b>Challan (Delivery Note) in the Tally layout.</figcaption></figure>
-      <ol class="steps">
-        <li><div>Open <span class="ui">MMT › Challan</span>. Pick a <span class="ui">Saved challan</span> or click <span class="ui">New</span>.</div></li>
-        <li><div><strong>Your Company (Seller)</strong>: name, Shipped From address, Invoice From address with GSTIN and state code, PAN.</div></li>
-        <li><div><strong>Consignee (Ship to)</strong> and <strong>Buyer (Bill to)</strong>: name, address, GSTIN, state. Click <span class="ui">Buyer = Consignee</span> when they are the same.</div></li>
-        <li><div><strong>Delivery Note Details</strong>: note number, date, terms of payment, reference, buyer's order, dispatch document, dispatched through, destination, LR / bill of lading, vehicle number, terms of delivery.</div></li>
-        <li><div><strong>Goods</strong>: description, HSN/SAC, quantity, rate and unit for each line. Choose IGST, or CGST + SGST. Totals and the amount in words are calculated.</div></li>
-        <li><div>Click <span class="ui">Export PDF</span>.</div></li>
-      </ol>
-    </div>
-
-    <div class="sec">
-      <h3>MMT: MMR delivery challan</h3>
-      <figure><img src="img/mmt_mmr.png" alt="MMR Delivery Challan: details table and material list with UoM, quantity, tag number, condition and remarks" loading="lazy"><figcaption><b>Fig 10.12</b>MMR material movement challan.</figcaption></figure>
-      <ol class="steps">
-        <li><div>Open <span class="ui">MMT › MMR</span> and pick or create a saved copy.</div></li>
-        <li><div>Fill in the details: challan number and date, field / block, contract number, from and to location, unit, mode of transport, vehicle, driver and contact, returnable (Y / N).</div></li>
-        <li><div>List the materials: description, UoM, quantity, tag number, condition (new / used) and remarks.</div></li>
-        <li><div>Enter the signature names (Prepared By, Approved By, Received By) and click <span class="ui">Export PDF</span>.</div></li>
-      </ol>
-    </div>
-  </div>
+<section>
+<h1 id="10-reports-and-export">10  Reports and Export</h1>
+<h2 id="export-data-to-excel">Export Data to Excel</h2>
+<ol><li>Filter the Data Table to the rows you want and choose the columns in the sidebar.</li><li>Click <strong>Export Data</strong> (toolbar, File menu or Report menu).</li><li>Choose where to save the file.</li></ol>
+<p>The workbook has the same grouped headers as the Data Table and includes an image of the current graph.</p>
+<div class="callout note"><strong>Important</strong> If the export fails, the target file is probably open in Excel. Close it and export again.</div>
+<h2 id="eowr-report-end-of-well-report">EOWR Report (End of Well Report)</h2>
+<figure><a href="images/12_eowr.png" target="_blank" rel="noopener"><img src="images/12_eowr.png" alt="EOWR Report Generator" loading="lazy" style="width:100%"></a><figcaption>Figure 25: EOWR Report Generator</figcaption></figure>
+<ol><li><strong>Source Files</strong>: choose the content ZIP (PDFs, images, Office files), the Word format template (a default is provided) and the output folder.</li><li><strong>Logos</strong> (optional): next to Company Logo and Client Logo click <strong>Choose Logo...</strong>. The company logo goes on the left of the page header, the client logo on the right and on the cover page.</li><li><strong>Section Mapping</strong>: click <strong>Analyze ZIP</strong> and check which report section each file goes into.</li><li><strong>Report Details</strong>: fill in the cover and header fields.</li><li>Click <strong>Generate Report</strong> and wait for the progress bar to finish.</li><li>Use <strong>Open DOCX</strong>, <strong>Open PDF</strong> or <strong>Open Output Folder</strong> to see the result.</li></ol>
+<div class="callout note"><strong>Important</strong> Converting Word, Excel and PowerPoint files needs Microsoft Office on this computer.</div>
+<h2 id="mmt-delivery-note-and-mmr">MMT: Delivery Note and MMR</h2>
+<figure><a href="images/10_mmt.png" target="_blank" rel="noopener"><img src="images/10_mmt.png" alt="MMT tab: Delivery Note (Challan) with live preview" loading="lazy" style="width:100%"></a><figcaption>Figure 26: MMT tab: Delivery Note (Challan) with live preview</figcaption></figure>
+<p>The MMT tab prepares material movement documents. The <strong>Challan</strong> sub-tab is a delivery note; the <strong>MMR</strong> sub-tab is the material movement register.</p>
+<ul><li>Fill in the seller, consignee, buyer, delivery note details and the goods table on the left; the preview on the right updates as you type.</li><li><strong>Saved challan</strong> keeps every document; use <strong>New</strong>, <strong>Duplicate</strong> and <strong>Delete</strong> to manage them.</li><li>Click <strong>Export PDF</strong> to save the finished document.</li></ul>
+<h2 id="calibration-reports">Calibration Reports</h2>
+<figure><a href="images/11_calibration_reports.png" target="_blank" rel="noopener"><img src="images/11_calibration_reports.png" alt="Calibration Reports: Barton Chart Recorder calibration check" loading="lazy" style="width:100%"></a><figcaption>Figure 27: Calibration Reports: Barton Chart Recorder calibration check</figcaption></figure>
+<p>Calibration Reports holds ready-made forms for the site checks of a well test job, each on its own sub-tab:</p>
+<div class="tbl"><table><thead><tr><th>Group</th><th>Reports</th></tr></thead><tbody><tr><td>Instrument calibration</td><td>Barton Chart Recorder, DP Sensor, DP Chart Recorder, Meter Factor</td></tr><tr><td>Safety function tests</td><td>ESD Function Test, Ignition Function Test, Earth Resistance, Hi-Lo Pilot</td></tr><tr><td>HSE</td><td>First-Aid Box, Noise Survey, Illumination Survey, Fire Extinguisher Layout, Mock Drill Report</td></tr><tr><td>Site layouts</td><td>SWT Layout, Wellpad Escape Route</td></tr></tbody></table></div>
+<ol><li>Pick the report sub-tab.</li><li>Fill in the details and the reading table on the left. The report preview on the right updates as you type.</li><li>Optional: add a <strong>Left Logo...</strong> and <strong>Right Logo...</strong>.</li><li>Click <strong>Export PDF</strong>.</li></ol>
+<p><strong>Saved copy</strong> keeps several copies of each report (New, Duplicate, Rename, Delete). <strong>Reset to Template</strong> restores the original form.</p>
+<h2 id="p-id">P&amp;ID</h2>
+<figure><a href="images/16_pid.png" target="_blank" rel="noopener"><img src="images/16_pid.png" alt="P&amp;ID: Full Package with site layout drawing" loading="lazy" style="width:100%"></a><figcaption>Figure 28: P&amp;ID: Full Package with site layout drawing</figcaption></figure>
+<p>The P&amp;ID tab produces piping and instrumentation diagram packages: Full Package, MPFM, EWT, Fix Setup, Miscellaneous and PFD. Each has a report title, details table, site layout drawing (<strong>Edit Layout...</strong>) and images, and is exported with <strong>Export PDF</strong>.</p>
 </section>
-
-<!-- 11 =========================================================== -->
-<section class="chapter" id="pid" style="--c:var(--c-draw)">
-  <div class="ch-head"><div class="ch-num">11</div><p class="ch-kicker">Drawings</p><h2>P&amp;ID and the Layout Editor</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>P&amp;ID sheets</h3>
-      <p>The <span class="ui">P&amp;ID</span> tab has six drawing sheets: Full Package, MPFM, EWT, Fix Setup, Miscellaneous and PFD. Each sheet is a report with a title block (unit, date, location), saved copies, logos and <span class="ui">Export PDF</span>, and its drawing is edited in the Layout Editor.</p>
-      <figure><img src="img/pid.png" alt="P&amp;ID Full Package: title block fields on the left and the drawing on the report page on the right" loading="lazy"><figcaption><b>Fig 11.1</b>P&amp;ID › Full Package.</figcaption></figure>
-      <ol class="steps">
-        <li><div>Click the sheet's sub-tab and pick a saved copy, or click <span class="ui">New</span> / <span class="ui">Duplicate</span>.</div></li>
-        <li><div>Fill in the title block and add logos.</div></li>
-        <li><div>Under <strong>Site Layout</strong> click <span class="ui">Edit Layout...</span> to change the drawing.</div></li>
-        <li><div>Click <span class="ui">Export PDF</span>. <span class="ui">Reset to Template</span> brings back the original drawing.</div></li>
-      </ol>
-      <div class="duo">
-        <figure><img src="img/pid_0.png" alt="P&amp;ID Full Package sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.2</b>P&amp;ID › Full Package</figcaption></figure>
-        <figure><img src="img/pid_1.png" alt="P&amp;ID MPFM sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.3</b>P&amp;ID › MPFM</figcaption></figure>
-        <figure><img src="img/pid_2.png" alt="P&amp;ID EWT sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.4</b>P&amp;ID › EWT</figcaption></figure>
-        <figure><img src="img/pid_3.png" alt="P&amp;ID Fix Setup sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.5</b>P&amp;ID › Fix Setup</figcaption></figure>
-        <figure><img src="img/pid_4.png" alt="P&amp;ID Miscellaneous sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.6</b>P&amp;ID › Miscellaneous</figcaption></figure>
-        <figure><img src="img/pid_5.png" alt="P&amp;ID PFD sheet: form and drawing preview" loading="lazy"><figcaption><b>Fig 11.7</b>P&amp;ID › PFD</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>The Layout Editor window</h3>
-      <p>Open it with <span class="ui">Edit Layout...</span> in any P&amp;ID sheet or in a report with a Site Layout (Noise, Illumination, Fire Extinguisher Layout, Mock Drill, SWT Layout, Escape Route). It opens as its own window and works on a copy: nothing changes in the report until you click <span class="ui">OK</span>.</p>
-      <figure><img src="img/layout_editor.png" alt="Layout Editor: toolbar on top, page tabs, tool palette on the left, drawing in the middle with boxes and extinguishers, properties panel on the right" loading="lazy"><figcaption><b>Fig 11.8</b>Layout Editor with the Fire Extinguisher Layout. Palette left, drawing centre, properties right.</figcaption></figure>
-      <div class="tbl"><table>
-        <tr><th style="width:24%">Area</th><th>What is there</th></tr>
-        <tr><td>Toolbar</td><td>Title of the page, <span class="ui">Undo</span>, <span class="ui">Redo</span>, <span class="ui">Duplicate</span>, <span class="ui">Delete</span>, <span class="ui">Bring Front</span>, <span class="ui">Send Back</span>, zoom <span class="ui">−</span> / <span class="ui">+</span>, <span class="ui">Fit</span>, <span class="ui">100%</span>, <span class="ui">Grid</span>, <span class="ui">Snap</span>, <span class="ui">Full Screen</span>.</td></tr>
-        <tr><td>Page tabs</td><td>Page 1, Page 2... Each page prints on a page of its own. <span class="ui">+ Add Page</span> / <span class="ui">Remove Page</span>.</td></tr>
-        <tr><td>Palette (left)</td><td>Everything you can add, in groups (table below). Click a tool to drop it on the page.</td></tr>
-        <tr><td>Drawing (centre)</td><td>The page. Click to select, drag to move, drag the corner square to resize, double-click to edit text.</td></tr>
-        <tr><td>Properties (right)</td><td>X, Y, Width, Height, Rotate, Text, Text size, Text angle, Line width, Line style, Line / Fill / Text colours, <span class="ui">Shape Styles</span>, <span class="ui">WordArt</span>, <span class="ui">Link to table row...</span></td></tr>
-        <tr><td>Status line (bottom)</td><td>Number of items and the main shortcuts. <span class="ui">OK</span> keeps the changes, <span class="ui">Cancel</span> throws them away.</td></tr>
-      </table></div>
-    </div>
-
-    <div class="sec">
-      <h3>The palette</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:24%">Group</th><th>Tools</th></tr>
-        <tr><td>Shapes</td><td>Box, Rounded Box, Circle / Zone, Triangle, Diamond, Star, Delay (D shape), Summing Junction, Arc.</td></tr>
-        <tr><td>Lines</td><td>Line, Arrow, Double Arrow, Elbow connectors (plain, arrow, double arrow), Curved connectors (plain, arrow, double arrow), Curve, Freeform shape, Scribble, Block Arrow, Dashed Line, Dotted Line.</td></tr>
-        <tr><td>Text</td><td>Text label, and <strong>Reading</strong>: a number box that can show a value from the report's table.</td></tr>
-        <tr><td>Insert</td><td>Image (from a file), CO2 Extinguisher and DCP Extinguisher symbols.</td></tr>
-        <tr><td>Shape gallery</td><td>Rectangles, Basic Shapes, Block Arrows, Equation Shapes, Flowchart, Stars and Banners, Callouts, Action Buttons (scroll down the palette).</td></tr>
-      </table></div>
-    </div>
-
-    <div class="sec">
-      <h3>Drawing step by step</h3>
-      <h4>Add and arrange shapes</h4>
-      <ol class="steps">
-        <li><div>Click a tool in the palette, for example <span class="ui">Box</span>. It appears on the page.</div></li>
-        <li><div>Drag it into place. Drag the corner square to resize. Arrow keys nudge the selection.</div></li>
-        <li><div>Double-click it and type its text (for example <em>SEPARATOR</em>). Set Text size and Text angle (0°, 90°, 270°) in Properties.</div></li>
-        <li><div>Set colours with Line, Fill and Text, or pick a one-click <span class="ui">Shape Styles</span> look (outline, fill, gradient, glossy, shadow, transparent). <span class="ui">WordArt</span> styles text.</div></li>
-        <li><div>Use <span class="ui">Bring Front</span> / <span class="ui">Send Back</span> when shapes overlap, and Rotate to turn an item about its centre.</div></li>
-      </ol>
-      <h4>Connect equipment with lines</h4>
-      <ol class="steps">
-        <li><div>Pick a line kind: straight, arrow, elbow or curved connector.</div></li>
-        <li><div>Drag the two <strong>end handles</strong> onto the equipment you want to join.</div></li>
-        <li><div>Drag the <strong>yellow handle</strong> to move the bend of an elbow or curved connector.</div></li>
-        <li><div>Set Line width and Line style (solid, dashed, dotted) in Properties.</div></li>
-      </ol>
-      <h4>Freeform and scribble</h4>
-      <ul class="dots">
-        <li><strong>Freeform: Shape</strong>: click each corner; double-click or right-click to finish. End on the first point to close the shape.</li>
-        <li><strong>Freeform: Scribble</strong>: drag with the mouse to draw; click the tool again, right-click or press Esc to stop.</li>
-      </ul>
-      <h4>Readings linked to the report table</h4>
-      <ol class="steps">
-        <li><div>Add a <span class="ui">Reading</span> box and place it at the measuring point on the layout.</div></li>
-        <li><div>Click <span class="ui">Link to table row...</span> and pick the row of the report's table (for example a noise or lux reading).</div></li>
-        <li><div>The box now shows that row's value and updates when the table changes. Hover over it to see the link.</div></li>
-      </ol>
-      <h4>Images and extinguisher symbols</h4>
-      <ul class="dots">
-        <li><span class="ui">Image...</span> places a picture (logo, photo, scanned sketch) that you can move and resize like a shape.</li>
-        <li><span class="ui">CO2 Extinguisher</span> and <span class="ui">DCP Extinguisher</span> drop the standard symbols. Add a numbered Star or Text next to each to match the extinguisher list.</li>
-      </ul>
-    </div>
-
-    <div class="sec">
-      <h3>Keyboard shortcuts</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:30%">Keys</th><th>Action</th></tr>
-        <tr><td>Ctrl + Z / Ctrl + Y</td><td>Undo / Redo</td></tr>
-        <tr><td>Ctrl + C / Ctrl + X / Ctrl + V</td><td>Copy / Cut / Paste the selection</td></tr>
-        <tr><td>Ctrl + D</td><td>Duplicate the selection</td></tr>
-        <tr><td>Del</td><td>Delete the selection</td></tr>
-        <tr><td>Arrow keys</td><td>Nudge the selection</td></tr>
-        <tr><td>Ctrl + mouse wheel, Ctrl + − / Ctrl + =</td><td>Zoom out / in</td></tr>
-        <tr><td>Ctrl + 0</td><td>Fit the whole page in the window</td></tr>
-        <tr><td>F11</td><td>Full screen</td></tr>
-        <tr><td>Esc</td><td>Stop Scribble / Freeform drawing</td></tr>
-      </table></div>
-      <div class="call tip"><b class="k">Tip</b><p>Turn on <span class="ui">Grid</span> and <span class="ui">Snap</span> to line equipment up neatly. Hold the layout in a saved copy, then <span class="ui">Duplicate</span> it for the next well instead of drawing from scratch.</p></div>
-      <figure><img src="img/layout_editor_pid.png" alt="Layout Editor with the P&amp;ID Full Package drawing: separator, lines, valves and legend" loading="lazy"><figcaption><b>Fig 11.9</b>Layout Editor with the P&amp;ID Full Package drawing.</figcaption></figure>
-    </div>
-  </div>
+<section>
+<h1 id="11-calculators">11  Calculators</h1>
+<p>These tabs are stand-alone tools. They do not change your logged data.</p>
+<h2 id="average">Average</h2>
+<figure><a href="images/06_average.png" target="_blank" rel="noopener"><img src="images/06_average.png" alt="Average Calculator" loading="lazy" style="width:100%"></a><figcaption>Figure 29: Average Calculator</figcaption></figure>
+<ol><li>Choose a <strong>Date / time range</strong> (From / To), or <strong>Last</strong> N hours / minutes ending now.</li><li>Tick the channels and measurement columns to average.</li><li>Click <strong>Calculate Average</strong>. Each result shows its unit and the number of readings used.</li><li>Fill in the Report Details and use <strong>Export to Excel</strong> or <strong>WhatsApp Message</strong> to send the results.</li></ol>
+<h2 id="calculator">Calculator</h2>
+<figure><a href="images/14_calculator.png" target="_blank" rel="noopener"><img src="images/14_calculator.png" alt="Calculator main menu" loading="lazy" style="width:100%"></a><figcaption>Figure 30: Calculator main menu</figcaption></figure>
+<p>Unit conversions (pressure, volume, temperature, length, flow rates, density), gas and oil flow through a choke, dry gas, general field calculations, choke sizes, pipe schedule, symbols and SI prefixes. Pick a card or a sidebar entry.</p>
+<h2 id="flow-calculator">Flow Calculator</h2>
+<figure><a href="images/15_flow_calculator.png" target="_blank" rel="noopener"><img src="images/15_flow_calculator.png" alt="Flow Calculator: Dry Gas Flow" loading="lazy" style="width:100%"></a><figcaption>Figure 31: Flow Calculator: Dry Gas Flow</figcaption></figure>
+<p>Stand-alone <strong>Dry Gas Flow</strong> (AGA-7 / ISO 10723) and <strong>Orifice Meter</strong> (ISO 5167 / AGA-3) calculators.</p>
+<h2 id="api-gravity">API Gravity</h2>
+<figure><a href="images/09_api_gravity.png" target="_blank" rel="noopener"><img src="images/09_api_gravity.png" alt="API Gravity Calculator" loading="lazy" style="width:100%"></a><figcaption>Figure 32: API Gravity Calculator</figcaption></figure>
+<p>Converts Specific Gravity, API Gravity and Density into each other at the chosen reference temperature.</p>
 </section>
-
-<!-- 12 =========================================================== -->
-<section class="chapter" id="tools" style="--c:var(--c-calc)">
-  <div class="ch-head"><div class="ch-num">12</div><p class="ch-kicker">Field tools</p><h2>Calculators</h2></div>
-  <div class="ch-body">
-    <p>The Calculator, Flow Calculator, API Gravity and Average tabs are stand-alone tools. They never change your logged data.</p>
-
-    <div class="sec">
-      <h3>Calculator tab</h3>
-      <figure><img src="img/calc_home.png" alt="Calculator main menu: navigation sidebar on the left and a card for every calculator" loading="lazy"><figcaption><b>Fig 12.1</b>Calculator main menu. Pick a page from the sidebar or click its card.</figcaption></figure>
-      <ol class="steps">
-        <li><div>Open the <span class="ui">Calculator</span> tab. The sidebar has four groups: Navigation, Conversions, Engineering Calcs and Reference.</div></li>
-        <li><div>Click a page in the sidebar, or a card on the Main Menu.</div></li>
-        <li><div>Conversions: type a value and pick its unit; every other unit is shown at once.</div></li>
-        <li><div>Engineering calcs: fill in the Inputs (the unit is shown in each box) and click the blue <span class="ui">Calculate</span> button.</div></li>
-        <li><div>The Result shows the answer. The green line under it repeats the formula with your numbers, so the calculation can be checked. The <strong>Formula Reference</strong> box explains each term.</div></li>
-      </ol>
-      <div class="calc-grid">
-        <div class="calc">
-          <figure><img src="img/calc_pressure.png" alt="Calculator page Pressure" loading="lazy"><figcaption><b>Fig 12.2</b>Pressure</figcaption></figure>
-          <p>Converts between psig, bar, kPa, atm, inH₂O, ftH₂O, inHg, mmHg and kg/cm².</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_volume.png" alt="Calculator page Volume" loading="lazy"><figcaption><b>Fig 12.3</b>Volume</figcaption></figure>
-          <p>Litres, US gallons, barrels, in³, ft³, cm³ and m³.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_temperature.png" alt="Calculator page Temperature" loading="lazy"><figcaption><b>Fig 12.4</b>Temperature</figcaption></figure>
-          <p>°F, °C, Kelvin and Rankine, with the conversion formulas.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_length.png" alt="Calculator page Length" loading="lazy"><figcaption><b>Fig 12.5</b>Length</figcaption></figure>
-          <p>Inches, feet, yards, miles, mm, cm, m and km.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_flowrate.png" alt="Calculator page Flow Rates" loading="lazy"><figcaption><b>Fig 12.6</b>Flow Rates</figcaption></figure>
-          <p>bbl/day, bbl/min, gal/min, m³/day, m³/min and litre/min.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_density.png" alt="Calculator page Density" loading="lazy"><figcaption><b>Fig 12.7</b>Density</figcaption></figure>
-          <p>°API, specific gravity, ppg, lb/ft³, g/cc, psi/ft and bar/m.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_flowtable.png" alt="Calculator page Flow Rate Table" loading="lazy"><figcaption><b>Fig 12.8</b>Flow Rate Table</figcaption></figure>
-          <p>One rate shown in L/sec, gal/min, ft³/sec, ft³/min, bbl/hr and bbl/day at once.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_gasflow.png" alt="Calculator page Gas Flow (Choke)" loading="lazy"><figcaption><b>Fig 12.9</b>Gas Flow (Choke)</figcaption></figure>
-          <p>Critical gas flow through a fixed choke: choke size (64ths), choke coefficient Cd, upstream pressure, wellhead temperature and gas gravity give the gas rate in Mscf/d, plus the choke in decimal inch and mm.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_oilflow.png" alt="Calculator page Oil Flow (Multi-Phase)" loading="lazy"><figcaption><b>Fig 12.10</b>Oil Flow (Multi-Phase)</figcaption></figure>
-          <p>Gilbert and Ros correlations: upstream pressure, choke size and GOR give the oil rate in bpd by both methods.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_drygas.png" alt="Calculator page Dry Gas (Choke Table)" loading="lazy"><figcaption><b>Fig 12.11</b>Dry Gas (Choke Table)</figcaption></figure>
-          <p>Gas rate through a choke nipple using the coefficients table.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_generalcalcs.png" alt="Calculator page General Field Calcs" loading="lazy"><figcaption><b>Fig 12.12</b>General Field Calcs</figcaption></figure>
-          <p>Gas and oil velocity, shrinkage and API conversions.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_chokes.png" alt="Calculator page Choke Sizes" loading="lazy"><figcaption><b>Fig 12.13</b>Choke Sizes</figcaption></figure>
-          <p>Choke sizes in 64ths with decimal inch, mm and area (in²).</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_pipesched.png" alt="Calculator page Pipe Schedule" loading="lazy"><figcaption><b>Fig 12.14</b>Pipe Schedule</figcaption></figure>
-          <p>ANSI Schedule 40 / 80 pipe: OD, wall thickness and ID.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_symbols.png" alt="Calculator page Symbols & Units" loading="lazy"><figcaption><b>Fig 12.15</b>Symbols & Units</figcaption></figure>
-          <p>Reservoir engineering symbols and their units.</p>
-        </div>
-        <div class="calc">
-          <figure><img src="img/calc_prefixes.png" alt="Calculator page SI Prefixes" loading="lazy"><figcaption><b>Fig 12.16</b>SI Prefixes</figcaption></figure>
-          <p>Multiplying factors from exa (10¹⁸) to femto (10⁻¹⁵).</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Flow Calculator tab</h3>
-      <div class="duo">
-        <figure><img src="img/flowcalc.png" alt="Flow Calculator, Dry Gas Flow: line pressure, temperature, gas gravity, pipe diameter, velocity, Z and heating value" loading="lazy"><figcaption><b>Fig 12.17</b>Dry Gas Flow (AGA-7 / ISO 10723).</figcaption></figure>
-        <figure><img src="img/flowcalc_orifice.png" alt="Flow Calculator, Orifice Meter: stand-alone orifice inputs and result" loading="lazy"><figcaption><b>Fig 12.18</b>Orifice Meter (stand-alone check).</figcaption></figure>
-      </div>
-      <ul class="dots">
-        <li><strong>Dry Gas Flow</strong>: line pressure, temperature, gas gravity, pipe inside diameter, flow velocity and compressibility give the flow at standard conditions (14.73 psia / 60 °F). Heating value is optional.</li>
-        <li><strong>Orifice Meter</strong>: a quick orifice check on typed values, without touching the Orifice Gas Flow columns of the Project.</li>
-        <li>Click <span class="ui">Calculate</span>; <span class="ui">Reset</span> brings back the example values.</li>
-      </ul>
-    </div>
-
-    <div class="sec">
-      <h3>API Gravity tab</h3>
-      <div class="split">
-        <ol class="steps">
-          <li><div>Choose the <span class="ui">Calculation Mode</span>, for example Specific Gravity → API.</div></li>
-          <li><div>Set the reference temperature (60 °F by default) and type the known value.</div></li>
-          <li><div>Click <span class="ui">Calculate</span>. Specific gravity, API gravity and density are converted into each other.</div></li>
-        </ol>
-        <figure><img src="img/apigravity.png" alt="API Gravity calculator: calculation mode, reference temperature 60 °F, specific gravity 0.85" loading="lazy"><figcaption><b>Fig 12.19</b>API Gravity.</figcaption></figure>
-      </div>
-    </div>
-
-    <div class="sec">
-      <h3>Average tab</h3>
-      <div class="split">
-        <ol class="steps">
-          <li><div>Choose <span class="ui">Date / time range</span> or <span class="ui">Last N Hours / Minutes ending now</span>.</div></li>
-          <li><div>Tick the channels.</div></li>
-          <li><div>Fill in Well / Location, Prepared by and Description.</div></li>
-          <li><div>Click <span class="ui">Calculate Average</span>. Each result shows its unit and the number of readings used.</div></li>
-          <li><div><span class="ui">Export to Excel</span> saves the results; <span class="ui">WhatsApp Message</span> sends them with the well, author and remarks.</div></li>
-        </ol>
-        <figure><img src="img/average.png" alt="Average Calculator with date range, channel list, results table and report details" loading="lazy"><figcaption><b>Fig 12.20</b>Average Calculator.</figcaption></figure>
-      </div>
-    </div>
-  </div>
+<section>
+<h1 id="12-data-management">12  Data Management</h1>
+<h2 id="database-tab">Database Tab</h2>
+<figure><a href="images/13_database.png" target="_blank" rel="noopener"><img src="images/13_database.png" alt="Database tab" loading="lazy" style="width:100%"></a><figcaption>Figure 33: Database tab</figcaption></figure>
+<ul><li>Filter by start and end date, then click <strong>Apply Filter</strong>.</li><li>See total readings, database size and file location.</li><li><strong>Refresh Stats</strong>: update the numbers.</li><li><strong>Optimize DB</strong>: compact the database file. Safe; no data is removed.</li><li><strong>Export Data</strong>: export the database to Excel.</li><li><strong>Reset DB</strong>: clears all readings of this Project. An Excel backup is saved first and you are asked to confirm.</li></ul>
+<div class="callout note"><strong>Important</strong> Reset DB cannot be undone inside FlowTrace. Keep the backup file it creates, or use File &gt; Save Project As first.</div>
+<h2 id="where-your-data-is-stored">Where your data is stored</h2>
+<div class="tbl"><table><thead><tr><th>Item</th><th>Location</th></tr></thead><tbody><tr><td>All Projects</td><td>Documents\FlowTrace\Projects\&lt;Project name&gt;</td></tr><tr><td>Settings of a Project</td><td>config.json inside the Project folder</td></tr><tr><td>Readings</td><td>modbus_data.db inside the Project folder</td></tr><tr><td>CSV logs</td><td>Live Log CSV folder in the export path</td></tr><tr><td>Automatic upgrade backups</td><td>Documents\FlowTrace\Upgrade Backups</td></tr></tbody></table></div>
+<ul><li>Your data is kept outside the program folder. Installing, reinstalling or uninstalling FlowTrace never deletes it.</li><li>The first time a new version starts, FlowTrace backs up every Project automatically.</li><li>To move a job to another PC: File &gt; Save Project As on the old PC, then Project &gt; Import Project on the new one.</li></ul>
+<h2 id="theme-and-display">Theme and Display</h2>
+<ul><li><strong>View &gt; Theme</strong>: Light (offices, bright cabins) or Dark (night shifts, dim control rooms). Applies the next time FlowTrace starts. Reports and exports always use light colors.</li><li><strong>File &gt; Column Order / Visibility...</strong>: arrange and hide columns.</li><li>Column order, hidden columns and graph set-ups are saved with each Project.</li></ul>
 </section>
-
-<!-- 13 =========================================================== -->
-<section class="chapter" id="data" style="--c:var(--c-data)">
-  <div class="ch-head"><div class="ch-num">13</div><p class="ch-kicker">Keeping data safe</p><h2>Data, backups and settings</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Database tab</h3>
-      <figure><img src="img/database.png" alt="Database tab: 11,520 total readings, 11.93 MB, Refresh Stats, Optimize DB, Reset DB and Export Data buttons, readings with session numbers"><figcaption><b>Fig 13.1</b>Database tab: 11,520 readings in an 11.93 MB database, each with its session number.</figcaption></figure>
-      <div class="tbl"><table>
-        <tr><th style="width:26%">Button</th><th>What it does</th></tr>
-        <tr><td>Apply Filter</td><td>Show readings between the Start and End date.</td></tr>
-        <tr><td>Refresh Stats</td><td>Update total readings and database size.</td></tr>
-        <tr><td>Optimize DB</td><td>Compact the database file. Safe; no data is removed.</td></tr>
-        <tr><td>Export Data</td><td>Export the database to Excel.</td></tr>
-        <tr><td>Reset DB</td><td>Clears all readings of this Project. An Excel backup is saved first and you are asked to confirm.</td></tr>
-      </table></div>
-      <div class="call warn"><b class="k">Caution</b><p>Reset DB cannot be undone inside FlowTrace. Keep the backup it creates, or use <span class="ui">File › Save Project As...</span> first.</p></div>
-    </div>
-
-    <div class="sec">
-      <h3>Where your data is stored</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:32%">Item</th><th>Location</th></tr>
-        <tr><td>All Projects</td><td><span class="ui">Documents\FlowTrace\Projects\&lt;Project name&gt;</span></td></tr>
-        <tr><td>Project settings</td><td><span class="ui">config.json</span> in the Project folder</td></tr>
-        <tr><td>Readings</td><td><span class="ui">modbus_data.db</span> in the Project folder</td></tr>
-        <tr><td>CSV logs</td><td><span class="ui">Live Log CSV</span> folder in the export path</td></tr>
-        <tr><td>Alarm Log</td><td><span class="ui">Alarm Log.csv</span> in the Project folder</td></tr>
-        <tr><td>Upgrade backups</td><td><span class="ui">Documents\FlowTrace\Upgrade Backups</span></td></tr>
-      </table></div>
-      <ul class="dots">
-        <li>Data is kept outside the program folder. Installing a new version, reinstalling or uninstalling never deletes it.</li>
-        <li>The first time a new version starts, every Project is backed up automatically.</li>
-        <li>To move a job to another PC: <span class="ui">File › Save Project As...</span> on the old PC, then <span class="ui">Project › Import Project...</span> on the new one.</li>
-      </ul>
-    </div>
-
-    <div class="sec">
-      <h3>Theme and display</h3>
-      <ul class="dots">
-        <li><span class="ui">View › Theme</span>: Light for offices and bright cabins, Dark for night shifts. Applies at the next start. Reports and exports always use light colours.</li>
-        <li><span class="ui">File › Column Order / Visibility...</span>: arrange and hide columns.</li>
-        <li>Column order, hidden columns and graph set-ups are saved with each Project. Every tab can also be opened from the <span class="ui">View</span> menu.</li>
-      </ul>
-    </div>
-  </div>
+<section>
+<h1 id="13-help-and-troubleshooting">13  Help and Troubleshooting</h1>
+<h2 id="built-in-help">Built-in Help</h2>
+<figure><a href="images/42_help.png" target="_blank" rel="noopener"><img src="images/42_help.png" alt="FlowTrace Help (Help &gt; FlowTrace Help, or F1)" loading="lazy" style="width:100%"></a><figcaption>Figure 34: FlowTrace Help (Help &gt; FlowTrace Help, or F1)</figcaption></figure>
+<p>The Help window groups the guide into categories on the left. Type in the search box to find a topic, and use <strong>Previous</strong> / <strong>Next</strong> to read in order.</p>
+<h2 id="cannot-connect-to-the-device">Cannot connect to the device</h2>
+<div class="tbl"><table><thead><tr><th>Message / symptom</th><th>What to do</th></tr></thead><tbody><tr><td>Could not open COM port</td><td>Check the cable and converter are plugged in and the port number is correct. Close any other program using the port.</td></tr><tr><td>Access is denied</td><td>Another program or a hidden duplicate COM port holds the port. In Device Manager &gt; View &gt; Show Hidden Devices &gt; Ports, uninstall grey or duplicate entries, reconnect and try again.</td></tr><tr><td>The device did not respond</td><td>Baudrate, Parity, Stop Bits or Slave ID do not match the device. Correct them in System Config.</td></tr><tr><td>Connection drops during a job</td><td>Monitoring stops safely. Fix the cable or power, then click Start Monitoring; a new session starts and earlier data is kept.</td></tr></tbody></table></div>
+<h2 id="values-look-wrong-or-are-missing">Values look wrong or are missing</h2>
+<ul><li>Wrong scale: check the channel Unit, Formula, Multiplier and Offset in Channels.</li><li>Values in the wrong columns: check Start Register and Channel Count against the device register map.</li><li>A column is missing: it may be hidden; tick it in the sidebar.</li><li>Measurement column is empty: open its tool from the Measurement menu and check that every input has a channel.</li><li>Rows missing in the Data Table: reset the date / time filter.</li></ul>
+<h2 id="graphs-and-exports">Graphs and exports</h2>
+<div class="tbl"><table><thead><tr><th>Symptom</th><th>What to do</th></tr></thead><tbody><tr><td>Graph is empty</td><td>The time window has no data. Set Start / End to a period with readings, or click Reset.</td></tr><tr><td>Graph stays zoomed or a band looks squeezed</td><td>Axis locks or a manual zoom are active. Use Graph Actions &gt; Reset View.</td></tr><tr><td>Excel export fails</td><td>The target file is open in Excel. Close it and export again.</td></tr><tr><td>EOWR: Office files not converted</td><td>Install Microsoft Office, or convert those files to PDF before putting them in the ZIP.</td></tr></tbody></table></div>
+<h2 id="activation-messages">Activation messages</h2>
+<div class="tbl"><table><thead><tr><th>Message</th><th>What to do</th></tr></thead><tbody><tr><td>This activation key is not valid for this computer</td><td>The key was made for another Machine Code. Send this computer's Machine Code and ask for a new key.</td></tr><tr><td>This key has already been entered on this computer</td><td>Nothing to do; check the license status at the bottom left.</td></tr><tr><td>This key has been cancelled by the administrator</td><td>Ask the administrator for a new key.</td></tr><tr><td>Start Monitoring is refused</td><td>The license has expired or was cancelled. Open Activation &gt; Activate / Renew... and enter a new key.</td></tr></tbody></table></div>
+<h2 id="support">Support</h2>
+<figure><a href="images/43_about.png" target="_blank" rel="noopener"><img src="images/43_about.png" alt="About FlowTrace (Help &gt; About FlowTrace)" loading="lazy" style="width:58%"></a><figcaption>Figure 35: About FlowTrace (Help &gt; About FlowTrace)</figcaption></figure>
+<p>Your version number is shown in <strong>Help &gt; About FlowTrace</strong>. Quote it when you contact support.</p>
+<p>Support and activation keys: <strong>info@energyforge.in</strong></p>
 </section>
-
-<!-- 14 =========================================================== -->
-<section class="chapter" id="trouble" style="--c:var(--c-data)">
-  <div class="ch-head"><div class="ch-num">14</div><p class="ch-kicker">When something is wrong</p><h2>Troubleshooting and support</h2></div>
-  <div class="ch-body">
-    <div class="sec">
-      <h3>Cannot connect to the device</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:32%">Message / symptom</th><th>What to do</th></tr>
-        <tr><td>Could not open COM port</td><td>Check the cable and converter and the port number. Close any other program using the port (Modbus Poll, another FlowTrace window).</td></tr>
-        <tr><td>Access is denied</td><td>Another program or a hidden duplicate COM port holds the port. Device Manager › View › Show Hidden Devices › Ports: uninstall grey or duplicate entries, reconnect and try again.</td></tr>
-        <tr><td>The device did not respond</td><td>Baudrate, Parity, Stop Bits or Slave ID do not match the device. Correct them in System Config.</td></tr>
-        <tr><td>Connection drops during a job</td><td>Monitoring stops safely. Fix cable or power, then Start Monitoring. A new session starts; earlier data is kept.</td></tr>
-      </table></div>
-    </div>
-    <div class="sec">
-      <h3>Values look wrong or are missing</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:32%">Symptom</th><th>What to do</th></tr>
-        <tr><td>Wrong scale</td><td>Check the channel's Unit, Formula, Multiplier and Offset in Channels.</td></tr>
-        <tr><td>Values in the wrong columns</td><td>Check Start Register and Channel Count against the device's register map.</td></tr>
-        <tr><td>A column is missing</td><td>It may be hidden. Tick it in the sidebar.</td></tr>
-        <tr><td>Measurement column is empty</td><td>Open its tool from the Measurement menu and check every input has a channel.</td></tr>
-        <tr><td>Rows missing in the Data Table</td><td>Reset the date / time filter. The table opens on today's date.</td></tr>
-        <tr><td>Gas rate unexpectedly low or high</td><td>Check the Tf channel: a channel in °C is converted to °F. Check bore, pipe ID and gas gravity.</td></tr>
-      </table></div>
-    </div>
-    <div class="sec">
-      <h3>Graphs, exports and activation</h3>
-      <div class="tbl"><table>
-        <tr><th style="width:32%">Symptom</th><th>What to do</th></tr>
-        <tr><td>Graph is empty</td><td>The time window has no data. Set Start / End to a period with readings, or click Reset.</td></tr>
-        <tr><td>Graph stays zoomed or a band looks squeezed</td><td>Axis locks or a manual zoom are active. Use Graph Actions › Reset View.</td></tr>
-        <tr><td>Key "not valid for this computer"</td><td>The key was made for another Machine Code. Send this computer's code and ask for a new key.</td></tr>
-        <tr><td>Start Monitoring is refused</td><td>The licence has expired or was cancelled. Open Activation › Activate / Renew... and enter a new key.</td></tr>
-      </table></div>
-    </div>
-    <div class="sec">
-      <h3>Updates and support</h3>
-      <ul class="dots">
-        <li>To update, run the new FlowTrace installer. It upgrades in place and keeps all Projects and settings.</li>
-        <li>Your version number is in <span class="ui">Help › About FlowTrace</span>. Quote it when you contact support.</li>
-        <li>Support and activation keys: <strong>info@energyforge.in</strong></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
+<footer>Copyright © EnergyForge. All rights reserved. · Support: <a href="mailto:info@energyforge.in">info@energyforge.in</a></footer>
 </main>
-
-<p class="foot">FlowTrace Operation Manual · October 2026</p>
-</div>
-
-</body></html>
+<script>
+// Mobile contents toggle and current-section highlight in the sidebar.
+const side = document.getElementById('side'), btn = document.getElementById('menu');
+btn.addEventListener('click', () => { side.classList.toggle('open'); btn.setAttribute('aria-expanded', side.classList.contains('open')); });
+document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () => side.classList.remove('open')));
+const links = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]));
+const obs = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { links.forEach(a => a.classList.remove('on')); const a = links.get(e.target.id); if (a) a.classList.add('on'); }
+}), { rootMargin: '0px 0px -75% 0px' });
+document.querySelectorAll('main h1[id], main h2[id]').forEach(h => obs.observe(h));
+</script>
+</body>
+</html>
